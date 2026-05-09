@@ -1,17 +1,9 @@
-'use client'
-
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import StatusPage from './status/page'
 
 /**
- * Root route redirects to the public status page.
+ * Root route renders the public status dashboard so the custom domain shows
+ * the same content immediately without a client-side redirect.
  */
 export default function HomePage() {
-	const router = useRouter()
-
-	useEffect(() => {
-		router.replace('/status')
-	}, [router])
-
-	return null
+	return <StatusPage />
 }
