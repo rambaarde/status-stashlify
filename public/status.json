@@ -1095,11 +1095,11 @@
         },
         {
           "date": "2026-05-09",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "100.0"
+      "currentStatus": "down",
+      "uptimePercent": "98.9"
     },
     {
       "name": "Authentication",
@@ -1467,6 +1467,21 @@
       ],
       "currentStatus": "operational",
       "uptimePercent": "100.0"
+    }
+  ],
+  "incidentReports": [
+    {
+      "id": "2026-05-09:payments",
+      "date": "2026-05-09",
+      "serviceName": "Payments",
+      "severity": "down",
+      "title": "Payments Service Outage",
+      "summary": "On May 9, 2026, our Payments service experienced a complete outage, resulting in a network error for users attempting to process transactions.",
+      "impact": "All payment processing functionalities were unavailable during this incident, affecting all users.",
+      "resolution": "Our team is currently investigating the root cause of the outage and is working to restore service as quickly as possible.",
+      "generatedAt": "2026-05-09T12:12:51.077Z",
+      "status": "published",
+      "source": "openrouter"
     }
   ]
 }
