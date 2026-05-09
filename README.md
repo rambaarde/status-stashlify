@@ -1,22 +1,45 @@
 # status-stashlify
 
-Standalone public status site scaffold for Stashlify.
+Standalone public status site for Stashlify.
 
-## Purpose
+## Tech Stack
 
-- Preserve the current status-page UI in a separate failure domain.
-- Read status data from a configurable feed, typically a public Upptime JSON export.
-- Keep the main Stashlify apps private and separate.
-- Publish the site to GitHub Pages at `status.stashlify.com`.
+- Next.js 15.5.7
+- React 19
+- TypeScript
+- GitHub Actions
+- GitHub Pages
 
-## Local setup
+## What It Does
+
+- Publishes the public status UI at `https://status.stashlify.com`
+- Records uptime snapshots without a database
+- Stores the feed in `public/status.json`
+- Falls back to the live uptime API during local development when needed
+
+## How It Works
+
+1. A scheduled GitHub Actions workflow runs every 5 minutes.
+2. The workflow probes the public Stashlify endpoints.
+3. The workflow writes the latest results into `public/status.json`.
+4. A separate Pages deploy workflow publishes the static site from `main`.
+5. The status UI reads `status.json` first, then falls back to the live uptime API, then to a neutral no-data state.
+
+## Data Storage
+
+- No database is used for `status.stashlify.com`.
+- The recorder is the GitHub Actions workflow.
+- The persisted history lives in `public/status.json` inside this repo.
+- GitHub Pages serves that file as part of the static export.
+
+## Local Setup
 
 1. Install dependencies.
-2. Set `NEXT_PUBLIC_UPTIME_API_URL` or `NEXT_PUBLIC_STATUS_FEED_URL` if needed.
-3. Run `npm run dev`.
+2. Run `npm run dev`.
+3. Set `NEXT_PUBLIC_STATUS_FEED_URL` only if you want to test a custom feed.
 
 ## Notes
 
 - `public/CNAME` is prefilled for `status.stashlify.com`.
-- If no feed is reachable, the UI falls back to a neutral no-data state instead of claiming everything is operational.
-- The deployed site uses static export via Next.js and GitHub Pages.
+- The site uses static export via Next.js and GitHub Pages.
+- The repo includes a scheduled recorder workflow in `.github/workflows/record-status.yml`.
