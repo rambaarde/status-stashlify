@@ -21,6 +21,7 @@ const LEGACY_STATUS_FILE = path.resolve(
 	'status.json',
 )
 const ARCHIVE_ROOT = path.join(STATUS_ROOT, 'archive')
+const FEED_TIME_ZONE = process.env.STATUS_FEED_TIME_ZONE || 'Asia/Manila'
 const OPENROUTER_MODEL =
 	process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini'
 const OPENROUTER_REFERER =
@@ -85,12 +86,25 @@ function getSimulatedServiceName() {
 }
 
 /**
- * Format a UTC day as `YYYY-MM-DD` for the public status feed.
+ * Format a day in the feed timezone as `YYYY-MM-DD`.
  * @param {Date} date
  * @returns {string}
  */
 function toDateKey(date) {
-	return date.toISOString().split('T')[0]
+	const parts = new Intl.DateTimeFormat('en-CA', {
+		timeZone: FEED_TIME_ZONE,
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+	}).formatToParts(date)
+	const year = parts.find((part) => part.type === 'year')?.value
+	const month = parts.find((part) => part.type === 'month')?.value
+	const day = parts.find((part) => part.type === 'day')?.value
+	if (!year || !month || !day) {
+		throw new Error('Failed to format feed date')
+	}
+
+	return `${year}-${month}-${day}`
 }
 
 /**
