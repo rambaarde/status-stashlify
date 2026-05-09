@@ -5,13 +5,22 @@ import { fileURLToPath } from 'node:url'
 const HISTORY_DAYS = 90
 const OPENROUTER_API_URL =
 	'https://openrouter.ai/api/v1/chat/completions'
-const STATUS_FILE = path.resolve(
+const STATUS_ROOT = path.resolve(
+	path.dirname(fileURLToPath(import.meta.url)),
+	'..',
+	'..',
+	'public',
+	'status',
+)
+const CURRENT_STATUS_FILE = path.join(STATUS_ROOT, 'current.json')
+const LEGACY_STATUS_FILE = path.resolve(
 	path.dirname(fileURLToPath(import.meta.url)),
 	'..',
 	'..',
 	'public',
 	'status.json',
 )
+const ARCHIVE_ROOT = path.join(STATUS_ROOT, 'archive')
 const OPENROUTER_MODEL =
 	process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini'
 const OPENROUTER_REFERER =
@@ -57,14 +66,17 @@ const STATUS_PRIORITY = {
 }
 
 /**
- * Report data persisted in the public status feed.
+ * Create a stable id for an incident report entry.
+ * @param {string} date
+ * @param {string} serviceName
+ * @returns {string}
  */
 function createIncidentReportId(date, serviceName) {
 	return `${date}:${serviceName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
 }
 
 /**
- * Resolve the manual simulation target from the workflow input.
+ * Resolve the manual simulation target from workflow input.
  * @returns {string | null}
  */
 function getSimulatedServiceName() {
@@ -101,8 +113,28 @@ function createDays(days, fillStatus = 'operational') {
 }
 
 /**
- * Create a fully populated status feed with green days by default.
- * @returns {{services: {name: string, days: {date: string, status: string}[], currentStatus: string, uptimePercent: string}[]}}
+ * Create a populated status feed and empty incident list by default.
+ * @returns {{
+ *   services: {
+ *     name: string
+ *     days: {date: string, status: string}[]
+ *     currentStatus: string
+ *     uptimePercent: string
+ *   }[]
+ *   incidentReports: {
+ *     id: string
+ *     date: string
+ *     serviceName: string
+ *     severity: 'degraded' | 'down'
+ *     title: string
+ *     summary: string
+ *     impact: string
+ *     resolution: string
+ *     generatedAt: string
+ *     status: 'draft' | 'published'
+ *     source: string
+ *   }[]
+ * }}
  */
 function createBaseFeed() {
 	return {
@@ -113,6 +145,22 @@ function createBaseFeed() {
 			uptimePercent: '100.0',
 		})),
 		incidentReports: [],
+	}
+}
+
+/**
+ * Build a compact daily archive record for the long-term history tree.
+ * @param {{name: string, currentStatus: string}[]} services
+ * @param {string} date
+ * @returns {{date: string, services: {name: string, status: string}[]}}
+ */
+function createArchiveRecord(services, date) {
+	return {
+		date,
+		services: services.map((service) => ({
+			name: service.name,
+			status: normalizeStatus(service.currentStatus),
+		})),
 	}
 }
 
@@ -189,7 +237,15 @@ function normalizeIncidentReports(reports) {
 /**
  * Normalize any existing feed so missing days become operational.
  * @param {unknown} payload
- * @returns {{services: {name: string, days: {date: string, status: string}[], currentStatus: string, uptimePercent: string}[]}}
+ * @returns {{
+ *   services: {
+ *     name: string
+ *     days: {date: string, status: string}[]
+ *     currentStatus: string
+ *     uptimePercent: string
+ *   }[]
+ *   incidentReports: ReturnType<typeof normalizeIncidentReports>
+ * }}
  */
 function normalizeExistingFeed(payload) {
 	const base = createBaseFeed()
@@ -302,7 +358,12 @@ function getUptimePercent(days) {
 /**
  * Probe a single service endpoint and convert the result into a status row.
  * @param {{name: string, url: string}} service
- * @returns {Promise<{name: string, status: 'operational' | 'degraded' | 'down'}>}
+ * @returns {Promise<{
+ *   name: string
+ *   status: 'operational' | 'degraded' | 'down'
+ *   responseMs: number
+ *   statusCode: number | null
+ * }>}
  */
 async function probeService(service) {
 	const start = Date.now()
@@ -323,6 +384,8 @@ async function probeService(service) {
 			return {
 				name: service.name,
 				status: 'down',
+				responseMs,
+				statusCode: response.status,
 			}
 		}
 
@@ -330,18 +393,24 @@ async function probeService(service) {
 			return {
 				name: service.name,
 				status: 'degraded',
+				responseMs,
+				statusCode: response.status,
 			}
 		}
 
 		return {
 			name: service.name,
 			status: 'operational',
+			responseMs,
+			statusCode: response.status,
 		}
 	} catch {
 		clearTimeout(timeout)
 		return {
 			name: service.name,
 			status: 'down',
+			responseMs: Date.now() - start,
+			statusCode: null,
 		}
 	}
 }
@@ -586,27 +655,53 @@ async function main() {
 		services: serviceRows,
 		incidentReports,
 	}
+	const archiveRecord = createArchiveRecord(refreshed.services, todayKey)
+	const [year, month, day] = todayKey.split('-')
+	const archiveFile = path.join(ARCHIVE_ROOT, year, month, `${day}.json`)
 
-	await mkdir(path.dirname(STATUS_FILE), { recursive: true })
-	await writeFile(`${STATUS_FILE}`, `${JSON.stringify(refreshed, null, 2)}\n`)
+	await Promise.all([
+		writeJsonFile(CURRENT_STATUS_FILE, refreshed),
+		writeJsonFile(LEGACY_STATUS_FILE, refreshed),
+		writeJsonFile(archiveFile, archiveRecord),
+	])
 
-	console.log(`Updated ${STATUS_FILE}`)
+	console.log(`Updated ${CURRENT_STATUS_FILE} and ${archiveFile}`)
 }
 
 /**
  * Load the previous status feed from disk if it exists.
  * @returns {Promise<{
- *   services: {name: string, days: {date: string, status: string}[], currentStatus: string, uptimePercent: string}[]
+ *   services: {
+ *     name: string
+ *     days: {date: string, status: string}[]
+ *     currentStatus: string
+ *     uptimePercent: string
+ *   }[]
  *   incidentReports: ReturnType<typeof normalizeIncidentReports>
  * }>}
  */
 async function loadExistingFeed() {
-	try {
-		const raw = await readFile(STATUS_FILE, 'utf8')
-		return normalizeExistingFeed(JSON.parse(raw))
-	} catch {
-		return createBaseFeed()
+	for (const filePath of [CURRENT_STATUS_FILE, LEGACY_STATUS_FILE]) {
+		try {
+			const raw = await readFile(filePath, 'utf8')
+			return normalizeExistingFeed(JSON.parse(raw))
+		} catch {
+			// Try the next snapshot path before falling back to a fresh base feed.
+		}
 	}
+
+	return createBaseFeed()
+}
+
+/**
+ * Persist a JSON payload with stable formatting.
+ * @param {string} filePath
+ * @param {unknown} data
+ * @returns {Promise<void>}
+ */
+async function writeJsonFile(filePath, data) {
+	await mkdir(path.dirname(filePath), { recursive: true })
+	await writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`)
 }
 
 main().catch((error) => {
