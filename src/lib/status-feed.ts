@@ -17,10 +17,28 @@ export interface ServiceData {
 }
 
 /**
+ * AI-drafted incident report shown on the public history page.
+ */
+export interface IncidentReport {
+	id: string
+	date: string
+	serviceName: string
+	severity: 'degraded' | 'down'
+	title: string
+	summary: string
+	impact: string
+	resolution: string
+	generatedAt: string
+	status: 'draft' | 'published'
+	source: string
+}
+
+/**
  * Response shape consumed by the status UI.
  */
 export interface StatusResponse {
 	services: ServiceData[]
+	incidentReports?: IncidentReport[]
 }
 
 const UPTIME_API_URL =
@@ -119,7 +137,47 @@ function normalizeStatusResponse(
 	}
 
 	if (services.length === 0) return null
-	return { services }
+	const rawIncidentReports = Array.isArray(
+		(payload as { incidentReports?: unknown }).incidentReports,
+	)
+		? ((payload as { incidentReports?: unknown[] }).incidentReports || [])
+		: []
+	const incidentReports = rawIncidentReports
+		.filter(
+			(report) =>
+				typeof report === 'object' &&
+				report !== null &&
+				typeof (report as { id?: unknown }).id === 'string' &&
+				typeof (report as { date?: unknown }).date === 'string' &&
+				typeof (report as { serviceName?: unknown }).serviceName === 'string' &&
+				((report as { severity?: unknown }).severity === 'degraded' ||
+					(report as { severity?: unknown }).severity === 'down') &&
+				typeof (report as { title?: unknown }).title === 'string' &&
+				typeof (report as { summary?: unknown }).summary === 'string' &&
+				typeof (report as { impact?: unknown }).impact === 'string' &&
+				typeof (report as { resolution?: unknown }).resolution === 'string' &&
+				typeof (report as { generatedAt?: unknown }).generatedAt === 'string' &&
+				((report as { status?: unknown }).status === 'draft' ||
+					(report as { status?: unknown }).status === 'published'),
+		)
+		.map((report) => ({
+			id: (report as IncidentReport).id,
+			date: (report as IncidentReport).date,
+			serviceName: (report as IncidentReport).serviceName,
+			severity: (report as IncidentReport).severity,
+			title: (report as IncidentReport).title,
+			summary: (report as IncidentReport).summary,
+			impact: (report as IncidentReport).impact,
+			resolution: (report as IncidentReport).resolution,
+			generatedAt: (report as IncidentReport).generatedAt,
+			status: (report as IncidentReport).status,
+			source:
+				typeof (report as { source?: unknown }).source === 'string'
+					? (report as { source: string }).source
+					: 'openrouter',
+		}))
+
+	return { services, incidentReports }
 }
 
 /**
