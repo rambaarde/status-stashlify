@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+	--background: #f7f7f5;
+	--foreground: #0f0f0f;
+	--font-outfit: 'Inter', ui-sans-serif, system-ui, sans-serif;
+	--font-inter: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+	background: var(--background);
+	color: var(--foreground);
+	color-scheme: light;
+}
+
+body {
+	margin: 0;
+	background:
+		radial-gradient(circle at top, rgba(180, 180, 160, 0.18), transparent 35%),
+		var(--background);
+	color: var(--foreground);
+	font-family: var(--font-inter);
+}
+
+a {
+	color: inherit;
+}

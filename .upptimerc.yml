@@ -1,0 +1,23 @@
+# Upptime manifest for the isolated public status repository.
+owner: rambaarde
+repo: status-stashlify
+user-agent: rambaarde
+
+sites:
+  - name: Stashlify Web
+    url: https://stashlify.com
+
+  - name: Stashlify API
+    url: https://api.stashlify.com/health
+
+status-website:
+  cname: status.stashlify.com
+  name: Stashlify Status
+  introTitle: "**Stashlify Status** is the isolated uptime page for Stashlify."
+  introMessage: This site is separated from the main application so it can stay reachable during incidents.
+  navbar:
+    - title: Status
+      href: /
+    - title: GitHub
+      href: https://github.com/rambaarde/status-stashlify
+  baseUrl: /
