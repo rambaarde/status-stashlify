@@ -27,8 +27,10 @@ const UPTIME_API_URL =
 	process.env.NEXT_PUBLIC_UPTIME_API_URL ||
 	'https://api.stashlify.com/uptime?days=90'
 
-const FALLBACK_FEED_URL =
-	process.env.NEXT_PUBLIC_STATUS_FEED_URL || '/status.json'
+const STATIC_FEED_URLS = [
+	process.env.NEXT_PUBLIC_STATUS_FEED_URL || '/status/current.json',
+	'/status.json',
+]
 
 const SERVICE_NAMES = [
 	'Dashboard & Storefront',
@@ -121,22 +123,38 @@ function normalizeStatusResponse(
 }
 
 /**
+ * Load the first valid static status feed from disk.
+ */
+async function loadStaticStatusFeed(): Promise<StatusResponse | null> {
+	for (const feedUrl of STATIC_FEED_URLS) {
+		try {
+			const response = await fetch(feedUrl, {
+				cache: 'no-store',
+			})
+
+			if (!response.ok) {
+				continue
+			}
+
+			const normalized = normalizeStatusResponse(
+				await response.json(),
+			)
+			if (normalized) return normalized
+		} catch {
+			// Try the next static feed before falling back to uptime.
+		}
+	}
+
+	return null
+}
+
+/**
  * Load the JSON feed used by the public status page.
  */
 export async function loadStatusFeed(): Promise<StatusResponse> {
 	try {
-		const response = await fetch(FALLBACK_FEED_URL, {
-			cache: 'no-store',
-		})
-
-		if (!response.ok) {
-			throw new Error('Static status feed unavailable')
-		}
-
-		const normalized = normalizeStatusResponse(
-			await response.json(),
-		)
-		if (normalized) return normalized
+		const staticFeed = await loadStaticStatusFeed()
+		if (staticFeed) return staticFeed
 	} catch {
 		// Fall through to the live uptime endpoint below.
 	}

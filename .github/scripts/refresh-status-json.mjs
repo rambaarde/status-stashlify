@@ -3,13 +3,22 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const HISTORY_DAYS = 90
-const STATUS_FILE = path.resolve(
+const STATUS_ROOT = path.resolve(
+	path.dirname(fileURLToPath(import.meta.url)),
+	'..',
+	'..',
+	'public',
+	'status',
+)
+const CURRENT_STATUS_FILE = path.join(STATUS_ROOT, 'current.json')
+const LEGACY_STATUS_FILE = path.resolve(
 	path.dirname(fileURLToPath(import.meta.url)),
 	'..',
 	'..',
 	'public',
 	'status.json',
 )
+const ARCHIVE_ROOT = path.join(STATUS_ROOT, 'archive')
 
 const SERVICES = [
 	{
@@ -76,6 +85,22 @@ function createBaseFeed() {
 			days: createDays(HISTORY_DAYS, 'operational'),
 			currentStatus: 'operational',
 			uptimePercent: '100.0',
+		})),
+	}
+}
+
+/**
+ * Build a compact daily archive record for the long-term history tree.
+ * @param {{name: string, currentStatus: string}[]} services
+ * @param {string} date
+ * @returns {{date: string, services: {name: string, status: string}[]}}
+ */
+function createArchiveRecord(services, date) {
+	return {
+		date,
+		services: services.map((service) => ({
+			name: service.name,
+			status: normalizeStatus(service.currentStatus),
 		})),
 	}
 }
@@ -273,10 +298,17 @@ async function main() {
 		}),
 	}
 
-	await mkdir(path.dirname(STATUS_FILE), { recursive: true })
-	await writeFile(`${STATUS_FILE}`, `${JSON.stringify(refreshed, null, 2)}\n`)
+	const archiveRecord = createArchiveRecord(refreshed.services, todayKey)
+	const [year, month, day] = todayKey.split('-')
+	const archiveFile = path.join(ARCHIVE_ROOT, year, month, `${day}.json`)
 
-	console.log(`Updated ${STATUS_FILE}`)
+	await Promise.all([
+		writeJsonFile(CURRENT_STATUS_FILE, refreshed),
+		writeJsonFile(LEGACY_STATUS_FILE, refreshed),
+		writeJsonFile(archiveFile, archiveRecord),
+	])
+
+	console.log(`Updated ${CURRENT_STATUS_FILE} and ${archiveFile}`)
 }
 
 /**
@@ -284,12 +316,27 @@ async function main() {
  * @returns {Promise<{services: {name: string, days: {date: string, status: string}[], currentStatus: string, uptimePercent: string}[]}>}
  */
 async function loadExistingFeed() {
-	try {
-		const raw = await readFile(STATUS_FILE, 'utf8')
-		return normalizeExistingFeed(JSON.parse(raw))
-	} catch {
-		return createBaseFeed()
+	for (const filePath of [CURRENT_STATUS_FILE, LEGACY_STATUS_FILE]) {
+		try {
+			const raw = await readFile(filePath, 'utf8')
+			return normalizeExistingFeed(JSON.parse(raw))
+		} catch {
+			// Try the next snapshot path before falling back to a fresh base feed.
+		}
 	}
+
+	return createBaseFeed()
+}
+
+/**
+ * Persist a JSON payload with stable formatting.
+ * @param {string} filePath
+ * @param {unknown} data
+ * @returns {Promise<void>}
+ */
+async function writeJsonFile(filePath, data) {
+	await mkdir(path.dirname(filePath), { recursive: true })
+	await writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`)
 }
 
 main().catch((error) => {
