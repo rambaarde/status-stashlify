@@ -3,7 +3,11 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
-import { loadStatusFeed, type StatusResponse } from '@/lib/status-feed'
+import {
+	loadStatusFeed,
+	type IncidentReport,
+	type StatusResponse,
+} from '@/lib/status-feed'
 
 type Status = 'operational' | 'degraded' | 'down' | 'nodata'
 
@@ -482,6 +486,65 @@ function UptimeTab({
 	)
 }
 
+function IncidentReportsSection({
+	reports,
+}: {
+	reports: IncidentReport[]
+}) {
+	if (reports.length === 0) return null
+
+	return (
+		<div className="mt-12 sm:mt-16">
+			<h2 className="text-xl sm:text-2xl font-bold text-[#141413] dark:text-[#F7F7F5] mb-4">
+				Incident Reports
+			</h2>
+			<div className="space-y-4">
+				{reports.map((report) => (
+					<div
+						key={report.id}
+						className="border border-[#DEDCD1] dark:border-[#2A2A2A] rounded px-4 py-4 sm:px-5"
+					>
+						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+							<div>
+								<h3 className="text-[16px] font-semibold text-[#141413] dark:text-[#F7F7F5]">
+									{report.title}
+								</h3>
+								<p className="text-[13px] text-[#b0ada3]">
+									{report.serviceName} • {report.date}
+								</p>
+							</div>
+							<span className="text-[11px] uppercase tracking-[0.08em] text-[#7c7b72] border border-[#DEDCD1] dark:border-[#2A2A2A] rounded px-2 py-1 self-start">
+								{report.status}
+							</span>
+						</div>
+						<p className="text-[14px] text-[#141413] dark:text-[#F7F7F5] leading-6">
+							{report.summary}
+						</p>
+						<div className="mt-4 grid gap-3 sm:grid-cols-2">
+							<div>
+								<p className="text-[12px] uppercase tracking-[0.08em] text-[#b0ada3] mb-1">
+									Impact
+								</p>
+								<p className="text-[14px] text-[#141413] dark:text-[#F7F7F5] leading-6">
+									{report.impact}
+								</p>
+							</div>
+							<div>
+								<p className="text-[12px] uppercase tracking-[0.08em] text-[#b0ada3] mb-1">
+									Resolution
+								</p>
+								<p className="text-[14px] text-[#141413] dark:text-[#F7F7F5] leading-6">
+									{report.resolution}
+								</p>
+							</div>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	)
+}
+
 export default function HistoryPage() {
 	const [tab, setTab] = useState<TabType>('incidents')
 	const [data, setData] = useState<StatusResponse | null>(
@@ -554,6 +617,18 @@ export default function HistoryPage() {
 		)
 		return rangeStart <= maxRangeStart
 	}, [rangeStart])
+
+	const incidentReports = useMemo(
+		() =>
+			(data?.incidentReports || [])
+				.slice()
+				.sort(
+					(a, b) =>
+						new Date(b.generatedAt).getTime() -
+						new Date(a.generatedAt).getTime()
+				),
+		[data?.incidentReports]
+	)
 
 	return (
 		<div className="min-h-screen bg-[#F7F7F5] dark:bg-[#0A0A0A] text-[#0F0F0F] dark:text-[#F7F7F5] font-[family-name:var(--font-inter)] selection:bg-[#0F0F0F] dark:selection:bg-white selection:text-white dark:selection:text-[#0F0F0F]">
@@ -662,6 +737,8 @@ export default function HistoryPage() {
 						rangeStart={rangeStart}
 					/>
 				)}
+
+				<IncidentReportsSection reports={incidentReports} />
 
 				<div className="mt-12 pt-6 border-t border-[#DEDCD1] dark:border-[#2A2A2A] flex items-center justify-between">
 					<Link

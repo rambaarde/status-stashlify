@@ -5,6 +5,18 @@ on:
     # Keep the public feed current without relying on the main app stack.
     - cron: '*/5 * * * *'
   workflow_dispatch:
+    inputs:
+      simulate_service:
+        description: 'Force a service to appear down for a manual run'
+        required: false
+        default: 'none'
+        type: choice
+        options:
+          - none
+          - dashboard_storefront
+          - inventory_sales_orders
+          - payments
+          - authentication
 
 permissions:
   contents: write
@@ -12,6 +24,12 @@ permissions:
 concurrency:
   group: status-feed
   cancel-in-progress: true
+
+env:
+  OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+  OPENROUTER_REFERER: https://status.stashlify.com
+  OPENROUTER_TITLE: Stashlify Status
+  SIMULATE_SERVICE: ${{ github.event_name == 'workflow_dispatch' && inputs.simulate_service || 'none' }}
 
 jobs:
   record:
