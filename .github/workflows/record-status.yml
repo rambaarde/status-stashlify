@@ -1,0 +1,48 @@
+name: Refresh Status Feed
+
+on:
+  schedule:
+    # Keep the public feed current without relying on the main app stack.
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: status-feed
+  cancel-in-progress: true
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-fund --no-audit
+
+      - name: Refresh status recorder
+        run: node .github/scripts/refresh-status-json.mjs
+
+      - name: Commit refreshed feed
+        run: |
+          if [ -z "$(git status --porcelain -- public/status.json)" ]; then
+            echo "No feed changes detected."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/status.json
+          git commit -m "chore(status): refresh uptime feed"
+          git push

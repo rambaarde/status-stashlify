@@ -125,6 +125,23 @@ function normalizeStatusResponse(
  */
 export async function loadStatusFeed(): Promise<StatusResponse> {
 	try {
+		const response = await fetch(FALLBACK_FEED_URL, {
+			cache: 'no-store',
+		})
+
+		if (!response.ok) {
+			throw new Error('Static status feed unavailable')
+		}
+
+		const normalized = normalizeStatusResponse(
+			await response.json(),
+		)
+		if (normalized) return normalized
+	} catch {
+		// Fall through to the live uptime endpoint below.
+	}
+
+	try {
 		const response = await fetch(UPTIME_API_URL, {
 			cache: 'no-store',
 		})
@@ -138,23 +155,8 @@ export async function loadStatusFeed(): Promise<StatusResponse> {
 		)
 		if (normalized) return normalized
 	} catch {
-		// Fall through to the static feed fallback below.
-	}
-
-	try {
-		const response = await fetch(FALLBACK_FEED_URL, {
-			cache: 'no-store',
-		})
-
-		if (!response.ok) {
-			return createFallbackStatusResponse()
-		}
-
-		const normalized = normalizeStatusResponse(
-			await response.json(),
-		)
-		return normalized ?? createFallbackStatusResponse()
-	} catch {
 		return createFallbackStatusResponse()
 	}
+
+	return createFallbackStatusResponse()
 }
