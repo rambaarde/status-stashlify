@@ -728,11 +728,11 @@
         },
         {
           "date": "2026-05-10",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "93.3"
+      "currentStatus": "down",
+      "uptimePercent": "92.2"
     },
     {
       "name": "Payments",
@@ -1095,11 +1095,11 @@
         },
         {
           "date": "2026-05-10",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "93.3"
+      "currentStatus": "down",
+      "uptimePercent": "92.2"
     },
     {
       "name": "Authentication",
@@ -1462,14 +1462,53 @@
         },
         {
           "date": "2026-05-10",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "93.3"
+      "currentStatus": "down",
+      "uptimePercent": "92.2"
     }
   ],
   "incidentReports": [
+    {
+      "id": "2026-05-10:authentication",
+      "date": "2026-05-10",
+      "serviceName": "Authentication",
+      "severity": "down",
+      "title": "Authentication Service Outage",
+      "summary": "On May 10, 2026, our Authentication service experienced an outage, resulting in a 502 HTTP status response. The response time observed was 686ms.",
+      "impact": "Customers were unable to authenticate, affecting access to services that rely on authentication.",
+      "resolution": "Our team is currently investigating the root cause of the outage and is working to restore service as quickly as possible.",
+      "generatedAt": "2026-05-10T14:05:02.731Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-05-10:payments",
+      "date": "2026-05-10",
+      "serviceName": "Payments",
+      "severity": "down",
+      "title": "Payments Service Outage",
+      "summary": "On May 10, 2026, our Payments service experienced an outage, resulting in HTTP 502 errors for users attempting to process transactions.",
+      "impact": "All payment processing functionality was unavailable during this incident, affecting all users.",
+      "resolution": "Our team is currently investigating the root cause of the outage and is working to restore service as quickly as possible.",
+      "generatedAt": "2026-05-10T14:05:04.831Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-05-10:inventory-sales-orders",
+      "date": "2026-05-10",
+      "serviceName": "Inventory, Sales & Orders",
+      "severity": "down",
+      "title": "Service Outage for Inventory, Sales & Orders",
+      "summary": "On May 10, 2026, our Inventory, Sales & Orders service experienced a complete outage, resulting in HTTP 502 errors for users.",
+      "impact": "All users were unable to access the Inventory, Sales & Orders service during this incident.",
+      "resolution": "Our team is actively investigating the root cause of the outage and is working to restore service as quickly as possible.",
+      "generatedAt": "2026-05-10T14:05:02.684Z",
+      "status": "published",
+      "source": "openrouter"
+    },
     {
       "id": "2026-04-19-stashlify-platform-outage",
       "date": "2026-04-19",
