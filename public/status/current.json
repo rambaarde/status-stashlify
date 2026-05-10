@@ -365,7 +365,7 @@
         }
       ],
       "currentStatus": "operational",
-      "uptimePercent": "100.0"
+      "uptimePercent": "93.3"
     },
     {
       "name": "Inventory, Sales & Orders",
@@ -732,7 +732,7 @@
         }
       ],
       "currentStatus": "operational",
-      "uptimePercent": "100.0"
+      "uptimePercent": "93.3"
     },
     {
       "name": "Payments",
@@ -1099,7 +1099,7 @@
         }
       ],
       "currentStatus": "operational",
-      "uptimePercent": "100.0"
+      "uptimePercent": "93.3"
     },
     {
       "name": "Authentication",
@@ -1466,7 +1466,7 @@
         }
       ],
       "currentStatus": "operational",
-      "uptimePercent": "100.0"
+      "uptimePercent": "93.3"
     }
   ],
   "incidentReports": [
