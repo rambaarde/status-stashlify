@@ -4,10 +4,6 @@
       "name": "Dashboard & Storefront",
       "days": [
         {
-          "date": "2026-02-09",
-          "status": "operational"
-        },
-        {
           "date": "2026-02-10",
           "status": "operational"
         },
@@ -281,27 +277,27 @@
         },
         {
           "date": "2026-04-19",
-          "status": "down"
+          "status": "operational"
         },
         {
           "date": "2026-04-20",
-          "status": "down"
+          "status": "operational"
         },
         {
           "date": "2026-04-21",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-22",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-23",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-24",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-25",
@@ -361,6 +357,10 @@
         },
         {
           "date": "2026-05-09",
+          "status": "operational"
+        },
+        {
+          "date": "2026-05-10",
           "status": "operational"
         }
       ],
@@ -371,10 +371,6 @@
       "name": "Inventory, Sales & Orders",
       "days": [
         {
-          "date": "2026-02-09",
-          "status": "operational"
-        },
-        {
           "date": "2026-02-10",
           "status": "operational"
         },
@@ -648,27 +644,27 @@
         },
         {
           "date": "2026-04-19",
-          "status": "down"
+          "status": "operational"
         },
         {
           "date": "2026-04-20",
-          "status": "down"
+          "status": "operational"
         },
         {
           "date": "2026-04-21",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-22",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-23",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-24",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-25",
@@ -728,6 +724,10 @@
         },
         {
           "date": "2026-05-09",
+          "status": "operational"
+        },
+        {
+          "date": "2026-05-10",
           "status": "operational"
         }
       ],
@@ -738,10 +738,6 @@
       "name": "Payments",
       "days": [
         {
-          "date": "2026-02-09",
-          "status": "operational"
-        },
-        {
           "date": "2026-02-10",
           "status": "operational"
         },
@@ -1015,27 +1011,27 @@
         },
         {
           "date": "2026-04-19",
-          "status": "down"
+          "status": "operational"
         },
         {
           "date": "2026-04-20",
-          "status": "down"
+          "status": "operational"
         },
         {
           "date": "2026-04-21",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-22",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-23",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-24",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-25",
@@ -1095,6 +1091,10 @@
         },
         {
           "date": "2026-05-09",
+          "status": "operational"
+        },
+        {
+          "date": "2026-05-10",
           "status": "operational"
         }
       ],
@@ -1105,10 +1105,6 @@
       "name": "Authentication",
       "days": [
         {
-          "date": "2026-02-09",
-          "status": "operational"
-        },
-        {
           "date": "2026-02-10",
           "status": "operational"
         },
@@ -1382,27 +1378,27 @@
         },
         {
           "date": "2026-04-19",
-          "status": "down"
+          "status": "operational"
         },
         {
           "date": "2026-04-20",
-          "status": "down"
+          "status": "operational"
         },
         {
           "date": "2026-04-21",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-22",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-23",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-24",
-          "status": "degraded"
+          "status": "operational"
         },
         {
           "date": "2026-04-25",
@@ -1463,25 +1459,15 @@
         {
           "date": "2026-05-09",
           "status": "operational"
+        },
+        {
+          "date": "2026-05-10",
+          "status": "operational"
         }
       ],
       "currentStatus": "operational",
       "uptimePercent": "100.0"
     }
   ],
-  "incidentReports": [
-    {
-      "id": "2026-04-19-stashlify-platform-outage",
-      "date": "2026-04-19",
-      "serviceName": "All Stashlify Services",
-      "severity": "down",
-      "title": "OpenRouter report: platform outage across Stashlify",
-      "summary": "Stashlify had a real platform outage from 19 Apr 2026 through 24 Apr 2026. Core services were fully down at first, then recovered into degraded state while the incident was still active.",
-      "impact": "Dashboard, inventory, orders, payments, and authentication were unavailable or unreliable across the incident window.",
-      "resolution": "Service recovered after backend stabilization and the outage window closed on 24 Apr 2026.",
-      "generatedAt": "2026-05-10T10:15:25+08:00",
-      "status": "published",
-      "source": "openrouter"
-    }
-  ]
+  "incidentReports": []
 }
