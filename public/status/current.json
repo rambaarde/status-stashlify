@@ -4,10 +4,6 @@
       "name": "Dashboard & Storefront",
       "days": [
         {
-          "date": "2026-02-10",
-          "status": "operational"
-        },
-        {
           "date": "2026-02-11",
           "status": "operational"
         },
@@ -361,6 +357,10 @@
         },
         {
           "date": "2026-05-10",
+          "status": "operational"
+        },
+        {
+          "date": "2026-05-11",
           "status": "operational"
         }
       ],
@@ -371,10 +371,6 @@
       "name": "Inventory, Sales & Orders",
       "days": [
         {
-          "date": "2026-02-10",
-          "status": "operational"
-        },
-        {
           "date": "2026-02-11",
           "status": "operational"
         },
@@ -729,19 +725,19 @@
         {
           "date": "2026-05-10",
           "status": "down"
+        },
+        {
+          "date": "2026-05-11",
+          "status": "operational"
         }
       ],
-      "currentStatus": "down",
+      "currentStatus": "operational",
       "uptimePercent": "92.2"
     },
     {
       "name": "Payments",
       "days": [
         {
-          "date": "2026-02-10",
-          "status": "operational"
-        },
-        {
           "date": "2026-02-11",
           "status": "operational"
         },
@@ -1096,19 +1092,19 @@
         {
           "date": "2026-05-10",
           "status": "down"
+        },
+        {
+          "date": "2026-05-11",
+          "status": "operational"
         }
       ],
-      "currentStatus": "down",
+      "currentStatus": "operational",
       "uptimePercent": "92.2"
     },
     {
       "name": "Authentication",
       "days": [
         {
-          "date": "2026-02-10",
-          "status": "operational"
-        },
-        {
           "date": "2026-02-11",
           "status": "operational"
         },
@@ -1463,9 +1459,13 @@
         {
           "date": "2026-05-10",
           "status": "down"
+        },
+        {
+          "date": "2026-05-11",
+          "status": "operational"
         }
       ],
-      "currentStatus": "down",
+      "currentStatus": "operational",
       "uptimePercent": "92.2"
     }
   ],
