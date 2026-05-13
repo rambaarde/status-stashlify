@@ -390,6 +390,17 @@ export default function StatusPage() {
 		}
 		return map
 	}, [data?.incidentReports])
+	const incidentReports = useMemo(
+		() =>
+			(data?.incidentReports || [])
+				.slice()
+				.sort(
+					(a, b) =>
+						new Date(b.generatedAt).getTime() -
+						new Date(a.generatedAt).getTime()
+				),
+		[data?.incidentReports]
+	)
 
 	return (
 		<div className="min-h-screen bg-[#F7F7F5] dark:bg-[#0A0A0A] text-[#0F0F0F] dark:text-[#F7F7F5] font-[family-name:var(--font-inter)] selection:bg-[#0F0F0F] dark:selection:bg-white selection:text-white dark:selection:text-[#0F0F0F]">
@@ -477,39 +488,32 @@ export default function StatusPage() {
 							<h2 className="text-xl sm:text-2xl font-bold text-[#141413] dark:text-[#F7F7F5] mb-4">
 								Past Incidents
 							</h2>
-							{[0, 1, 2, 3, 4, 5, 6].map(
-								(daysAgo) => {
-									const date =
-										new Date()
-									date.setDate(
-										date.getDate() -
-											daysAgo
-									)
-									const formatted =
-										date.toLocaleDateString(
-											'en-US',
-											{
-												month: 'short',
-												day: 'numeric',
-												year: 'numeric',
-											}
+							{incidentReports.length === 0 ? (
+								<p className="text-[14px] text-[#b0ada3]">
+									No incidents reported.
+								</p>
+							) : (
+								<div className="space-y-4">
+									{incidentReports.map(
+										(report) => (
+											<div
+												key={report.id}
+												className="py-3 border-b border-[#DEDCD1] dark:border-[#2A2A2A]"
+											>
+												<h3 className="text-[14px] font-bold text-[#141413] dark:text-[#F7F7F5]">
+													{report.title}
+												</h3>
+												<p className="text-[13px] text-[#b0ada3] mt-0.5">
+													{report.serviceName}{' '}
+													• {report.date}
+												</p>
+												<p className="text-[14px] text-[#141413] dark:text-[#F7F7F5] leading-6 mt-2">
+													{report.summary}
+												</p>
+											</div>
 										)
-									return (
-										<div
-											key={daysAgo}
-											className="py-3 border-b border-[#DEDCD1] dark:border-[#2A2A2A]"
-										>
-											<h3 className="text-[14px] font-bold text-[#141413] dark:text-[#F7F7F5]">
-												{formatted}
-											</h3>
-											<p className="text-[14px] text-[#b0ada3] mt-0.5">
-												No
-												incidents
-												reported.
-											</p>
-										</div>
-									)
-								}
+									)}
+								</div>
 							)}
 						</div>
 					</>
