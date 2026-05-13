@@ -91,9 +91,11 @@ function formatDate(dateStr: string): string {
 
 function Tooltip({
 	day,
+	summary,
 	barRef,
 }: {
 	day: DayData
+	summary?: string
 	barRef: HTMLDivElement
 }) {
 	const [pos, setPos] = useState({ left: 0, top: 0, arrowLeft: 0 })
@@ -162,6 +164,11 @@ function Tooltip({
 						{label}
 					</div>
 				)}
+				{summary && status !== 'operational' && (
+					<p className="mt-2 text-[13px] leading-5 text-[#141413] dark:text-[#F7F7F5]">
+						{summary}
+					</p>
+				)}
 			</div>
 		</div>
 	)
@@ -183,9 +190,13 @@ function useIsMobile() {
 function UptimeBar({
 	days,
 	uptimePercent,
+	serviceName,
+	reportMap,
 }: {
 	days: DayData[]
 	uptimePercent: string
+	serviceName: string
+	reportMap: Map<string, string>
 }) {
 	const [activeDay, setActiveDay] = useState<{
 		index: number
@@ -253,6 +264,11 @@ function UptimeBar({
 			{activeDay !== null && (
 				<Tooltip
 					day={visibleDays[activeDay.index]}
+					summary={
+						reportMap.get(
+							`${visibleDays[activeDay.index].date}::${serviceName}`,
+						)
+					}
 					barRef={activeDay.ref}
 				/>
 			)}
@@ -262,8 +278,10 @@ function UptimeBar({
 
 function ServiceCard({
 	service,
+	reportMap,
 }: {
 	service: ServiceData
+	reportMap: Map<string, string>
 }) {
 	const status = service.currentStatus as Status
 	const label =
@@ -284,6 +302,8 @@ function ServiceCard({
 			<UptimeBar
 				days={service.days}
 				uptimePercent={service.uptimePercent}
+				serviceName={service.name}
+				reportMap={reportMap}
 			/>
 		</div>
 	)
@@ -363,6 +383,13 @@ export default function StatusPage() {
 	const banner =
 		BANNER_CONFIG[overall] ??
 		BANNER_CONFIG.nodata
+	const incidentSummaryMap = useMemo(() => {
+		const map = new Map<string, string>()
+		for (const report of data?.incidentReports || []) {
+			map.set(`${report.date}::${report.serviceName}`, report.summary)
+		}
+		return map
+	}, [data?.incidentReports])
 
 	return (
 		<div className="min-h-screen bg-[#F7F7F5] dark:bg-[#0A0A0A] text-[#0F0F0F] dark:text-[#F7F7F5] font-[family-name:var(--font-inter)] selection:bg-[#0F0F0F] dark:selection:bg-white selection:text-white dark:selection:text-[#0F0F0F]">
@@ -425,6 +452,9 @@ export default function StatusPage() {
 											}
 											service={
 												service
+											}
+											reportMap={
+												incidentSummaryMap
 											}
 										/>
 									)
