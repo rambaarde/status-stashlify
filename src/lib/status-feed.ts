@@ -50,6 +50,9 @@ const STATIC_FEED_URLS = [
 	'/status.json',
 ]
 
+const FEED_TIME_ZONE =
+	process.env.NEXT_PUBLIC_STATUS_FEED_TIME_ZONE || 'Asia/Manila'
+
 const SERVICE_NAMES = [
 	'Dashboard & Storefront',
 	'Inventory, Sales & Orders',
@@ -61,13 +64,43 @@ function createFallbackDays(days = 90): DayData[] {
 	const result: DayData[] = []
 	for (let i = days - 1; i >= 0; i--) {
 		const date = new Date()
-		date.setDate(date.getDate() - i)
+		date.setUTCDate(date.getUTCDate() - i)
 		result.push({
-			date: date.toISOString().split('T')[0],
+			date: toFeedDateKey(date),
 			status: 'nodata',
 		})
 	}
 	return result
+}
+
+/**
+ * Format a date in the same timezone used by the recorder.
+ */
+function toFeedDateKey(date: Date): string {
+	const parts = new Intl.DateTimeFormat('en-CA', {
+		timeZone: FEED_TIME_ZONE,
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+	}).formatToParts(date)
+	const year = parts.find((part) => part.type === 'year')?.value
+	const month = parts.find((part) => part.type === 'month')?.value
+	const day = parts.find((part) => part.type === 'day')?.value
+
+	if (!year || !month || !day) {
+		return date.toISOString().split('T')[0]
+	}
+
+	return `${year}-${month}-${day}`
+}
+
+/**
+ * Static feed is fresh only if it already includes today's feed date.
+ */
+function isFreshForToday(feed: StatusResponse): boolean {
+	const todayKey = toFeedDateKey(new Date())
+	const latestDay = feed.services[0]?.days.at(-1)?.date
+	return latestDay === todayKey
 }
 
 export function createFallbackStatusResponse(): StatusResponse {
@@ -210,9 +243,13 @@ async function loadStaticStatusFeed(): Promise<StatusResponse | null> {
  * Load the JSON feed used by the public status page.
  */
 export async function loadStatusFeed(): Promise<StatusResponse> {
+	let staticFeed: StatusResponse | null = null
+
 	try {
-		const staticFeed = await loadStaticStatusFeed()
-		if (staticFeed) return staticFeed
+		staticFeed = await loadStaticStatusFeed()
+		if (staticFeed && isFreshForToday(staticFeed)) {
+			return staticFeed
+		}
 	} catch {
 		// Fall through to the live uptime endpoint below.
 	}
@@ -226,13 +263,21 @@ export async function loadStatusFeed(): Promise<StatusResponse> {
 			throw new Error('Uptime endpoint unavailable')
 		}
 
-		const normalized = normalizeStatusResponse(
-			await response.json(),
-		)
-		if (normalized) return normalized
+		const normalized = normalizeStatusResponse(await response.json())
+		if (normalized) {
+			if (staticFeed?.incidentReports?.length) {
+				return {
+					services: normalized.services,
+					incidentReports: staticFeed.incidentReports,
+				}
+			}
+			return normalized
+		}
 	} catch {
+		if (staticFeed) return staticFeed
 		return createFallbackStatusResponse()
 	}
 
+	if (staticFeed) return staticFeed
 	return createFallbackStatusResponse()
 }
