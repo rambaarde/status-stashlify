@@ -361,11 +361,11 @@
         },
         {
           "date": "2026-05-13",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "92.2"
+      "currentStatus": "down",
+      "uptimePercent": "91.1"
     },
     {
       "name": "Inventory, Sales & Orders",
@@ -728,11 +728,11 @@
         },
         {
           "date": "2026-05-13",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "91.1"
+      "currentStatus": "down",
+      "uptimePercent": "90.0"
     },
     {
       "name": "Payments",
@@ -1095,11 +1095,11 @@
         },
         {
           "date": "2026-05-13",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "91.1"
+      "currentStatus": "down",
+      "uptimePercent": "90.0"
     },
     {
       "name": "Authentication",
@@ -1462,14 +1462,66 @@
         },
         {
           "date": "2026-05-13",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "91.1"
+      "currentStatus": "down",
+      "uptimePercent": "90.0"
     }
   ],
   "incidentReports": [
+    {
+      "id": "2026-05-13:authentication",
+      "date": "2026-05-13",
+      "serviceName": "Authentication",
+      "severity": "down",
+      "title": "Authentication Service Outage",
+      "summary": "On May 13, 2026, our Authentication service experienced a complete outage, resulting in a network error for users attempting to access the service.",
+      "impact": "Users were unable to authenticate, leading to a disruption in access to the platform.",
+      "resolution": "Our team is currently investigating the root cause of the outage and is working to restore service as quickly as possible.",
+      "generatedAt": "2026-05-13T00:16:18.075Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-05-13:payments",
+      "date": "2026-05-13",
+      "serviceName": "Payments",
+      "severity": "down",
+      "title": "Payments Service Outage",
+      "summary": "On May 13, 2026, our Payments service experienced a complete outage, resulting in a network error with an observed response time of 10000ms.",
+      "impact": "Customers were unable to process payments during this incident.",
+      "resolution": "Our team is currently investigating the root cause of the outage and is working to restore service as quickly as possible.",
+      "generatedAt": "2026-05-13T00:16:18.162Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-05-13:inventory-sales-orders",
+      "date": "2026-05-13",
+      "serviceName": "Inventory, Sales & Orders",
+      "severity": "down",
+      "title": "Service Outage - Inventory, Sales & Orders",
+      "summary": "On May 13, 2026, our Inventory, Sales & Orders service experienced a complete outage, resulting in a network error for users.",
+      "impact": "Customers were unable to access the Inventory, Sales & Orders service, leading to disruptions in operations.",
+      "resolution": "Our team is actively investigating the issue to determine the root cause and restore service as quickly as possible.",
+      "generatedAt": "2026-05-13T00:16:18.082Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-05-13:dashboard-storefront",
+      "date": "2026-05-13",
+      "serviceName": "Dashboard & Storefront",
+      "severity": "down",
+      "title": "Service Outage on Dashboard & Storefront",
+      "summary": "On May 13, 2026, our Dashboard and Storefront services experienced a complete outage, resulting in a network error for users.",
+      "impact": "All users were unable to access the Dashboard and Storefront services during this incident.",
+      "resolution": "Our team is currently investigating the root cause of the outage and is working to restore services as quickly as possible.",
+      "generatedAt": "2026-05-13T00:16:18.249Z",
+      "status": "published",
+      "source": "openrouter"
+    },
     {
       "id": "2026-05-11:authentication",
       "date": "2026-05-11",
