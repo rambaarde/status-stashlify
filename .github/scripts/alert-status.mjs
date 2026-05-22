@@ -10,10 +10,24 @@ const STATUS_ALERT_STATE_FILE = path.resolve(
 
 const RESEND_API_URL = 'https://api.resend.com/emails'
 const STATUS_PAGE_URL = 'https://status.stashlify.com'
+
+/**
+ * Normalize raw env values to avoid quoted or whitespace-padded secrets.
+ * GitHub/GCP secret payloads sometimes arrive with wrapping quotes.
+ * @param {string | undefined} value
+ * @returns {string}
+ */
+function readEnvValue(value) {
+	return (value || '').trim().replace(/^["']|["']$/g, '')
+}
+
 const RESEND_FROM_EMAIL =
-	process.env.RESEND_FROM_EMAIL || 'noreply@stashlify.com'
+	readEnvValue(process.env.RESEND_FROM_EMAIL) || 'noreply@stashlify.com'
 const RESEND_RECIPIENTS =
-	(process.env.STATUS_ALERT_RECIPIENTS || 'stashlify.team@gmail.com')
+	(
+		readEnvValue(process.env.STATUS_ALERT_RECIPIENTS) ||
+		'stashlify.team@gmail.com'
+	)
 		.split(/[,;\n]/)
 		.map((recipient) => recipient.trim())
 		.filter(Boolean)
@@ -52,7 +66,7 @@ const STATUS_PRIORITY = {
  * @returns {string | null}
  */
 function getSimulatedServiceName() {
-	const key = process.env.SIMULATE_SERVICE || 'none'
+	const key = readEnvValue(process.env.SIMULATE_SERVICE) || 'none'
 	const simulated = SERVICES.find((service) => service.key === key)
 	return simulated?.name ?? null
 }
@@ -332,7 +346,7 @@ function buildTextBody(kind, state, affectedServices) {
  * @returns {Promise<void>}
  */
 async function sendEmail(notification) {
-	const apiKey = process.env.RESEND_API_KEY
+	const apiKey = readEnvValue(process.env.RESEND_API_KEY)
 	if (!apiKey) {
 		throw new Error('RESEND_API_KEY is required for alert email delivery')
 	}
