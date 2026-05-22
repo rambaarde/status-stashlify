@@ -26,9 +26,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-  RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
-  STATUS_ALERT_RECIPIENTS: ${{ secrets.STATUS_ALERT_RECIPIENTS }}
   SIMULATE_SERVICE: ${{ github.event_name == 'workflow_dispatch' && inputs.simulate_service || 'none' }}
   STATUS_FEED_TIME_ZONE: Asia/Manila
 
@@ -47,6 +44,10 @@ jobs:
           node-version: 20
 
       - name: Run alert check
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
+          STATUS_ALERT_RECIPIENTS: ${{ secrets.STATUS_ALERT_RECIPIENTS }}
         run: node .github/scripts/alert-status.mjs
 
       - name: Commit alert state
