@@ -10,6 +10,9 @@ const STATUS_ALERT_STATE_FILE = path.resolve(
 
 const RESEND_API_URL = 'https://api.resend.com/emails'
 const STATUS_PAGE_URL = 'https://status.stashlify.com'
+const PROBE_TIMEOUT_MS = 10000
+const PROBE_RETRY_DELAY_MS = 20000
+const PROBE_ATTEMPTS = 3
 
 /**
  * Normalize raw env values to avoid quoted or whitespace-padded secrets.
@@ -79,7 +82,7 @@ function getSimulatedServiceName() {
 async function probeService(service) {
 	const start = Date.now()
 	const controller = new AbortController()
-	const timeout = setTimeout(() => controller.abort(), 10000)
+	const timeout = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS)
 
 	try {
 		const response = await fetch(service.url, {
@@ -124,6 +127,35 @@ async function probeService(service) {
 			statusCode: null,
 		}
 	}
+}
+
+/**
+ * Wait for a short delay between downtime confirmation probes.
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
+function sleep(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+/**
+ * Confirm whether a service is truly down by requiring repeated failures
+ * across a roughly one-minute window. A transient blip should recover here
+ * and avoid an emergency email.
+ * @param {{name: string, url: string}} service
+ * @returns {Promise<{name: string, status: 'healthy' | 'degraded' | 'down', responseMs: number, statusCode: number | null}>}
+ */
+async function probeServiceWithConfirmation(service) {
+	let lastResult = await probeService(service)
+	if (lastResult.status !== 'down') return lastResult
+
+	for (let attempt = 1; attempt < PROBE_ATTEMPTS; attempt += 1) {
+		await sleep(PROBE_RETRY_DELAY_MS)
+		lastResult = await probeService(service)
+		if (lastResult.status !== 'down') return lastResult
+	}
+
+	return lastResult
 }
 
 /**
@@ -225,17 +257,15 @@ function summarizeServices(services) {
 
 /**
  * Decide if the current state needs an email.
+ * Only send for a real outage transition to avoid recovery/degraded noise.
  * @param {'healthy' | 'degraded' | 'down'} previousState
  * @param {'healthy' | 'degraded' | 'down'} nextState
  * @returns {'alert' | 'recovery' | null}
  */
 function getNotificationKind(previousState, nextState) {
 	if (previousState === nextState) return null
-	if (nextState === 'healthy') return 'recovery'
-	if (STATUS_PRIORITY[nextState] > STATUS_PRIORITY[previousState]) {
-		return 'alert'
-	}
-	return null
+	if (nextState !== 'down') return null
+	return 'alert'
 }
 
 /**
@@ -408,7 +438,7 @@ async function main() {
 	const simulatedServiceName = getSimulatedServiceName()
 
 	const probeResults = await Promise.all(
-		SERVICES.map((service) => probeService(service)),
+		SERVICES.map((service) => probeServiceWithConfirmation(service)),
 	)
 
 	const normalizedResults = probeResults.map((result) => {
