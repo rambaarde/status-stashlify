@@ -1,4 +1,13 @@
 {
-  "overallState": "healthy",
-  "affectedServices": []
+  "overallState": "down",
+  "affectedServices": [
+    {
+      "name": "Payments",
+      "status": "down",
+      "responseMs": 629,
+      "statusCode": null
+    }
+  ],
+  "lastChangedAt": "2026-05-22T03:30:44.359Z",
+  "lastNotifiedAt": "2026-05-22T03:30:44.359Z"
 }
