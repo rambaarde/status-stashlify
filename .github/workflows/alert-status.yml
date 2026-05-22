@@ -1,0 +1,63 @@
+name: Alert Status Changes
+
+on:
+  schedule:
+    # Match the recorder cadence so alerting and feed updates stay aligned.
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+    inputs:
+      simulate_service:
+        description: 'Force a service to appear down for a manual run'
+        required: false
+        default: 'none'
+        type: choice
+        options:
+          - none
+          - dashboard_storefront
+          - inventory_sales_orders
+          - payments
+          - authentication
+
+permissions:
+  contents: write
+
+concurrency:
+  group: status-alert
+  cancel-in-progress: true
+
+env:
+  RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+  RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
+  STATUS_ALERT_RECIPIENTS: ${{ secrets.STATUS_ALERT_RECIPIENTS }}
+  SIMULATE_SERVICE: ${{ github.event_name == 'workflow_dispatch' && inputs.simulate_service || 'none' }}
+  STATUS_FEED_TIME_ZONE: Asia/Manila
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run alert check
+        run: node .github/scripts/alert-status.mjs
+
+      - name: Commit alert state
+        run: |
+          if [ -z "$(git status --porcelain -- .github/status-alert-state.json)" ]; then
+            echo "No alert state changes detected."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/status-alert-state.json
+          git commit -m "chore(status): record alert state"
+          git push origin HEAD:main

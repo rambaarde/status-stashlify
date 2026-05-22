@@ -10,6 +10,11 @@ const compat = new FlatCompat({
 /**
  * Flat ESLint config for the standalone status site.
  */
-const eslintConfig = [...compat.extends('next/core-web-vitals')]
+const eslintConfig = [
+	{
+		ignores: ['.next/**', 'out/**', 'dist/**'],
+	},
+	...compat.extends('next/core-web-vitals'),
+]
 
 export default eslintConfig
