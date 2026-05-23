@@ -1,6 +1,25 @@
 {
-  "overallState": "healthy",
-  "affectedServices": [],
-  "lastChangedAt": "2026-05-22T06:09:23.484Z",
-  "lastNotifiedAt": "2026-05-22T06:09:23.484Z"
+  "overallState": "down",
+  "affectedServices": [
+    {
+      "name": "Inventory, Sales & Orders",
+      "status": "down",
+      "responseMs": 777,
+      "statusCode": 502
+    },
+    {
+      "name": "Payments",
+      "status": "down",
+      "responseMs": 844,
+      "statusCode": 502
+    },
+    {
+      "name": "Authentication",
+      "status": "down",
+      "responseMs": 777,
+      "statusCode": 502
+    }
+  ],
+  "lastChangedAt": "2026-05-23T20:31:14.434Z",
+  "lastNotifiedAt": "2026-05-23T20:31:14.434Z"
 }
