@@ -361,11 +361,11 @@
         },
         {
           "date": "2026-05-24",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "88.9"
+      "currentStatus": "down",
+      "uptimePercent": "87.8"
     },
     {
       "name": "Inventory, Sales & Orders",
@@ -728,11 +728,11 @@
         },
         {
           "date": "2026-05-24",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "87.8"
+      "currentStatus": "down",
+      "uptimePercent": "86.7"
     },
     {
       "name": "Payments",
@@ -1095,11 +1095,11 @@
         },
         {
           "date": "2026-05-24",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "87.8"
+      "currentStatus": "down",
+      "uptimePercent": "86.7"
     },
     {
       "name": "Authentication",
@@ -1462,14 +1462,27 @@
         },
         {
           "date": "2026-05-24",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "87.8"
+      "currentStatus": "down",
+      "uptimePercent": "86.7"
     }
   ],
   "incidentReports": [
+    {
+      "id": "2026-05-24:dashboard-storefront",
+      "date": "2026-05-24",
+      "serviceName": "Dashboard & Storefront",
+      "severity": "down",
+      "title": "Service Outage - Dashboard & Storefront",
+      "summary": "On May 24, 2026, our Dashboard and Storefront services experienced a complete outage, resulting in HTTP 502 errors for users.",
+      "impact": "Users were unable to access the Dashboard and Storefront services during this incident.",
+      "resolution": "Our team is currently investigating the root cause of the outage and is working to restore service as quickly as possible.",
+      "generatedAt": "2026-05-24T10:00:13.258Z",
+      "status": "published",
+      "source": "openrouter"
+    },
     {
       "id": "2026-05-24:authentication",
       "date": "2026-05-24",
