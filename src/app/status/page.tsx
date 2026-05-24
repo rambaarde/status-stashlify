@@ -84,6 +84,20 @@ const BANNER_CONFIG: Record<
 	},
 }
 
+const INCIDENT_ACCENT: Record<
+	'degraded' | 'down',
+	{ title: string; border: string }
+> = {
+	degraded: {
+		title: 'text-[#e6a82a]',
+		border: 'border-l-[#e6a82a]',
+	},
+	down: {
+		title: 'text-[#e04343]',
+		border: 'border-l-[#e04343]',
+	},
+}
+
 function formatDate(dateStr: string): string {
 	const date = new Date(dateStr + 'T00:00:00')
 	return date.toLocaleDateString('en-GB', {
@@ -502,9 +516,19 @@ export default function StatusPage() {
 										(report) => (
 											<div
 												key={report.id}
-												className="py-3 border-b border-[#DEDCD1] dark:border-[#2A2A2A]"
+												className={`py-3 pl-4 border-b border-l-4 border-[#DEDCD1] dark:border-[#2A2A2A] ${
+													INCIDENT_ACCENT[
+														report.severity
+													].border
+												}`}
 											>
-												<h3 className="text-[14px] font-bold text-[#141413] dark:text-[#F7F7F5]">
+												<h3
+													className={`text-[14px] font-bold ${
+														INCIDENT_ACCENT[
+															report.severity
+														].title
+													}`}
+												>
 													{report.title}
 												</h3>
 												<p className="text-[13px] text-[#b0ada3] mt-0.5">
