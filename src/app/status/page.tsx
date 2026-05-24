@@ -8,7 +8,11 @@ import {
 } from 'react'
 import { RefreshCw } from 'lucide-react'
 import Link from 'next/link'
-import { loadStatusFeed, type StatusResponse } from '@/lib/status-feed'
+import {
+	formatIncidentGeneratedAt,
+	loadStatusFeed,
+	type StatusResponse,
+} from '@/lib/status-feed'
 
 type Status =
 	| 'operational'
@@ -504,8 +508,11 @@ export default function StatusPage() {
 													{report.title}
 												</h3>
 												<p className="text-[13px] text-[#b0ada3] mt-0.5">
-													{report.serviceName}{' '}
-													• {report.date}
+													{report.serviceName}
+													{' • '}
+													{formatIncidentGeneratedAt(
+														report.generatedAt
+													)}
 												</p>
 												<p className="text-[14px] text-[#141413] dark:text-[#F7F7F5] leading-6 mt-2">
 													{report.summary}

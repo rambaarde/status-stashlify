@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import {
+	formatIncidentGeneratedAt,
 	loadStatusFeed,
 	type IncidentReport,
 	type StatusResponse,
@@ -541,7 +542,11 @@ function IncidentReportsSection({
 									{report.title}
 								</h3>
 								<p className="text-[13px] text-[#b0ada3]">
-									{report.serviceName} • {report.date}
+									{report.serviceName}
+									{' • '}
+									{formatIncidentGeneratedAt(
+										report.generatedAt
+									)}
 								</p>
 							</div>
 							<span className="text-[11px] uppercase tracking-[0.08em] text-[#7c7b72] border border-[#DEDCD1] dark:border-[#2A2A2A] rounded px-2 py-1 self-start">

@@ -95,6 +95,29 @@ function toFeedDateKey(date: Date): string {
 }
 
 /**
+ * Format incident generation time in the public status-site timezone.
+ */
+export function formatIncidentGeneratedAt(
+	generatedAt: string,
+): string {
+	const date = new Date(generatedAt)
+
+	if (Number.isNaN(date.getTime())) {
+		return generatedAt
+	}
+
+	return new Intl.DateTimeFormat('en-US', {
+		timeZone: FEED_TIME_ZONE,
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric',
+		hour: 'numeric',
+		minute: '2-digit',
+		timeZoneName: 'short',
+	}).format(date)
+}
+
+/**
  * Static feed is fresh only if it already includes today's feed date.
  */
 function isFreshForToday(feed: StatusResponse): boolean {
