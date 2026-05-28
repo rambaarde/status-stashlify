@@ -7,15 +7,15 @@
     },
     {
       "name": "Inventory, Sales & Orders",
-      "status": "down"
+      "status": "operational"
     },
     {
       "name": "Payments",
-      "status": "down"
+      "status": "operational"
     },
     {
       "name": "Authentication",
-      "status": "down"
+      "status": "operational"
     }
   ]
 }
