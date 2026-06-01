@@ -4,10 +4,6 @@
       "name": "Dashboard & Storefront",
       "days": [
         {
-          "date": "2026-03-04",
-          "status": "operational"
-        },
-        {
           "date": "2026-03-05",
           "status": "operational"
         },
@@ -361,6 +357,10 @@
         },
         {
           "date": "2026-06-01",
+          "status": "operational"
+        },
+        {
+          "date": "2026-06-02",
           "status": "operational"
         }
       ],
@@ -371,10 +371,6 @@
       "name": "Inventory, Sales & Orders",
       "days": [
         {
-          "date": "2026-03-04",
-          "status": "operational"
-        },
-        {
           "date": "2026-03-05",
           "status": "operational"
         },
@@ -729,19 +725,19 @@
         {
           "date": "2026-06-01",
           "status": "operational"
+        },
+        {
+          "date": "2026-06-02",
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "87.8"
+      "currentStatus": "down",
+      "uptimePercent": "86.7"
     },
     {
       "name": "Payments",
       "days": [
         {
-          "date": "2026-03-04",
-          "status": "operational"
-        },
-        {
           "date": "2026-03-05",
           "status": "operational"
         },
@@ -1096,19 +1092,19 @@
         {
           "date": "2026-06-01",
           "status": "operational"
+        },
+        {
+          "date": "2026-06-02",
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "87.8"
+      "currentStatus": "down",
+      "uptimePercent": "86.7"
     },
     {
       "name": "Authentication",
       "days": [
         {
-          "date": "2026-03-04",
-          "status": "operational"
-        },
-        {
           "date": "2026-03-05",
           "status": "operational"
         },
@@ -1463,13 +1459,56 @@
         {
           "date": "2026-06-01",
           "status": "operational"
+        },
+        {
+          "date": "2026-06-02",
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "87.8"
+      "currentStatus": "down",
+      "uptimePercent": "86.7"
     }
   ],
   "incidentReports": [
+    {
+      "id": "2026-06-02:authentication",
+      "date": "2026-06-02",
+      "serviceName": "Authentication",
+      "severity": "down",
+      "title": "Authentication Service Outage",
+      "summary": "On June 2, 2026, our Authentication service experienced an outage, resulting in a 502 HTTP status response for users attempting to authenticate.",
+      "impact": "Users were unable to access their accounts due to the service being down.",
+      "resolution": "Our team is currently investigating the root cause of the outage and working to restore service as quickly as possible.",
+      "generatedAt": "2026-06-01T18:20:19.565Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-06-02:payments",
+      "date": "2026-06-02",
+      "serviceName": "Payments",
+      "severity": "down",
+      "title": "Payments Service Outage",
+      "summary": "On June 2, 2026, our Payments service experienced a complete outage, resulting in HTTP 502 errors for users attempting to process transactions. The observed response time was 783ms during this incident.",
+      "impact": "Customers were unable to complete payment transactions, impacting their ability to make purchases.",
+      "resolution": "Our team is actively investigating the root cause of the outage and will provide updates as more information becomes available.",
+      "generatedAt": "2026-06-01T18:20:03.451Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-06-02:inventory-sales-orders",
+      "date": "2026-06-02",
+      "serviceName": "Inventory, Sales & Orders",
+      "severity": "down",
+      "title": "Service Outage - Inventory, Sales & Orders",
+      "summary": "On June 2, 2026, our Inventory, Sales & Orders service experienced a complete outage, resulting in HTTP status 502 errors for users.",
+      "impact": "Customers were unable to access the Inventory, Sales & Orders service during this incident.",
+      "resolution": "The issue is currently under investigation. We are working to restore service as quickly as possible and will provide updates as they become available.",
+      "generatedAt": "2026-06-01T18:20:03.401Z",
+      "status": "published",
+      "source": "openrouter"
+    },
     {
       "id": "2026-05-28:authentication",
       "date": "2026-05-28",
