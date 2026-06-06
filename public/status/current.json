@@ -728,11 +728,11 @@
         },
         {
           "date": "2026-06-07",
-          "status": "down"
+          "status": "operational"
         }
       ],
-      "currentStatus": "down",
-      "uptimePercent": "86.7"
+      "currentStatus": "operational",
+      "uptimePercent": "87.8"
     },
     {
       "name": "Payments",
@@ -1095,11 +1095,11 @@
         },
         {
           "date": "2026-06-07",
-          "status": "down"
+          "status": "operational"
         }
       ],
-      "currentStatus": "down",
-      "uptimePercent": "86.7"
+      "currentStatus": "operational",
+      "uptimePercent": "87.8"
     },
     {
       "name": "Authentication",
@@ -1462,11 +1462,11 @@
         },
         {
           "date": "2026-06-07",
-          "status": "down"
+          "status": "operational"
         }
       ],
-      "currentStatus": "down",
-      "uptimePercent": "86.7"
+      "currentStatus": "operational",
+      "uptimePercent": "87.8"
     }
   ],
   "incidentReports": [
