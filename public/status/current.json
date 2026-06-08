@@ -728,11 +728,11 @@
         },
         {
           "date": "2026-06-08",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "87.8"
+      "currentStatus": "down",
+      "uptimePercent": "86.7"
     },
     {
       "name": "Payments",
@@ -1095,11 +1095,11 @@
         },
         {
           "date": "2026-06-08",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "87.8"
+      "currentStatus": "down",
+      "uptimePercent": "86.7"
     },
     {
       "name": "Authentication",
@@ -1462,14 +1462,53 @@
         },
         {
           "date": "2026-06-08",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "87.8"
+      "currentStatus": "down",
+      "uptimePercent": "86.7"
     }
   ],
   "incidentReports": [
+    {
+      "id": "2026-06-08:authentication",
+      "date": "2026-06-08",
+      "serviceName": "Authentication",
+      "severity": "down",
+      "title": "Authentication Service Outage",
+      "summary": "On June 8, 2026, our Authentication service experienced an outage, resulting in a 502 HTTP status response. The service was down for all users, with an observed response time of 894ms.",
+      "impact": "All users were unable to authenticate, preventing access to the platform.",
+      "resolution": "Our team is currently investigating the root cause of the outage and will provide updates as soon as more information is available.",
+      "generatedAt": "2026-06-08T12:05:04.483Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-06-08:payments",
+      "date": "2026-06-08",
+      "serviceName": "Payments",
+      "severity": "down",
+      "title": "Payments Service Outage",
+      "summary": "On June 8, 2026, our Payments service experienced an outage, resulting in HTTP status 502 errors for users attempting to process transactions.",
+      "impact": "Customers were unable to complete payment transactions during this incident.",
+      "resolution": "Our team is actively investigating the root cause of the outage and working to restore service as quickly as possible.",
+      "generatedAt": "2026-06-08T12:05:03.597Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-06-08:inventory-sales-orders",
+      "date": "2026-06-08",
+      "serviceName": "Inventory, Sales & Orders",
+      "severity": "down",
+      "title": "Service Outage for Inventory, Sales & Orders",
+      "summary": "On June 8, 2026, our Inventory, Sales & Orders service experienced an outage, resulting in HTTP 502 errors for users.",
+      "impact": "Customers were unable to access the Inventory, Sales & Orders service during this time.",
+      "resolution": "Our team is currently investigating the root cause of the outage and working to restore service as quickly as possible.",
+      "generatedAt": "2026-06-08T12:05:04.728Z",
+      "status": "published",
+      "source": "openrouter"
+    },
     {
       "id": "2026-06-07:authentication",
       "date": "2026-06-07",
