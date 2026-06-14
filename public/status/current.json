@@ -361,11 +361,11 @@
         },
         {
           "date": "2026-06-14",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "88.9"
+      "currentStatus": "down",
+      "uptimePercent": "87.8"
     },
     {
       "name": "Inventory, Sales & Orders",
@@ -728,11 +728,11 @@
         },
         {
           "date": "2026-06-14",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "86.7"
+      "currentStatus": "down",
+      "uptimePercent": "85.6"
     },
     {
       "name": "Payments",
@@ -1095,11 +1095,11 @@
         },
         {
           "date": "2026-06-14",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "86.7"
+      "currentStatus": "down",
+      "uptimePercent": "85.6"
     },
     {
       "name": "Authentication",
@@ -1462,14 +1462,66 @@
         },
         {
           "date": "2026-06-14",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "86.7"
+      "currentStatus": "down",
+      "uptimePercent": "85.6"
     }
   ],
   "incidentReports": [
+    {
+      "id": "2026-06-14:authentication",
+      "date": "2026-06-14",
+      "serviceName": "Authentication",
+      "severity": "down",
+      "title": "Authentication Service Outage",
+      "summary": "On June 14, 2026, our Authentication service experienced a complete outage, resulting in a network error for users attempting to authenticate. The observed response time was 10000ms, indicating significant delays.",
+      "impact": "All users were unable to access authentication services, preventing login and access to related functionalities.",
+      "resolution": "Our team is currently investigating the root cause of the outage and is working to restore service as quickly as possible.",
+      "generatedAt": "2026-06-14T12:06:45.343Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-06-14:payments",
+      "date": "2026-06-14",
+      "serviceName": "Payments",
+      "severity": "down",
+      "title": "Payments Service Outage",
+      "summary": "On June 14, 2026, our Payments service experienced a complete outage, resulting in a network error and response times exceeding 9999ms.",
+      "impact": "Customers were unable to process payments during this incident.",
+      "resolution": "Our team is currently investigating the root cause of the outage and is working to restore service as quickly as possible.",
+      "generatedAt": "2026-06-14T12:06:43.081Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-06-14:inventory-sales-orders",
+      "date": "2026-06-14",
+      "serviceName": "Inventory, Sales & Orders",
+      "severity": "down",
+      "title": "Service Disruption on June 14, 2026",
+      "summary": "On June 14, 2026, our Inventory, Sales & Orders services experienced a complete outage, resulting in a network error with an observed response time of 9999ms.",
+      "impact": "Customers were unable to access Inventory, Sales & Orders services during this incident.",
+      "resolution": "Our team is currently investigating the root cause of the outage and working to restore services as quickly as possible.",
+      "generatedAt": "2026-06-14T12:06:44.377Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-06-14:dashboard-storefront",
+      "date": "2026-06-14",
+      "serviceName": "Dashboard & Storefront",
+      "severity": "down",
+      "title": "Service Outage for Dashboard & Storefront",
+      "summary": "On June 14, 2026, our Dashboard and Storefront services experienced a complete outage, resulting in a network error for users.",
+      "impact": "Users were unable to access the Dashboard and Storefront services, leading to disruption in service availability.",
+      "resolution": "Our team is currently investigating the root cause of the outage and is working to restore services as quickly as possible.",
+      "generatedAt": "2026-06-14T12:06:43.281Z",
+      "status": "published",
+      "source": "openrouter"
+    },
     {
       "id": "2026-06-10:authentication",
       "date": "2026-06-10",
