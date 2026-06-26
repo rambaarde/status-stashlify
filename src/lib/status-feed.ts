@@ -53,6 +53,20 @@ const STATIC_FEED_URLS = [
 const FEED_TIME_ZONE =
 	process.env.NEXT_PUBLIC_STATUS_FEED_TIME_ZONE || 'Asia/Manila'
 
+/**
+ * How many whole feed-calendar days a static JSON feed may lag before we stop
+ * trusting it and attempt the live uptime API instead.
+ *
+ * Rationale:
+ * - The public site is deployed via GitHub Pages, which can lag behind feed
+ *   commits even when the recorder is healthy.
+ * - The uptime API is a fallback only; it may temporarily report `nodata`
+ *   while the static recorder already has correct daily snapshots.
+ * - A small grace window keeps the public page stable during deploy delays
+ *   without masking a genuinely abandoned static feed long-term.
+ */
+const STATIC_FEED_MAX_LAG_DAYS = 2
+
 const SERVICE_NAMES = [
 	'Dashboard & Storefront',
 	'Inventory, Sales & Orders',
@@ -117,13 +131,39 @@ export function formatIncidentGeneratedAt(
 	}).format(date)
 }
 
+function dayKeyToUtc(dayKey: string): number | null {
+	const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dayKey)
+	if (!match) return null
+
+	const [, year, month, day] = match
+	return Date.UTC(Number(year), Number(month) - 1, Number(day))
+}
+
 /**
- * Static feed is fresh only if it already includes today's feed date.
+ * Static feed is acceptable as long as it is not materially stale. Pages deploy
+ * lag of a few hours or one calendar day should not force a fallback to the
+ * live uptime API.
  */
-function isFreshForToday(feed: StatusResponse): boolean {
+function isStaticFeedFreshEnough(feed: StatusResponse): boolean {
 	const todayKey = toFeedDateKey(new Date())
 	const latestDay = feed.services[0]?.days.at(-1)?.date
-	return latestDay === todayKey
+
+	if (!latestDay) {
+		return false
+	}
+
+	const todayUtc = dayKeyToUtc(todayKey)
+	const latestUtc = dayKeyToUtc(latestDay)
+
+	if (todayUtc === null || latestUtc === null) {
+		return latestDay === todayKey
+	}
+
+	const diffDays = Math.floor(
+		(todayUtc - latestUtc) / (24 * 60 * 60 * 1000),
+	)
+
+	return diffDays <= STATIC_FEED_MAX_LAG_DAYS
 }
 
 export function createFallbackStatusResponse(): StatusResponse {
@@ -270,7 +310,7 @@ export async function loadStatusFeed(): Promise<StatusResponse> {
 
 	try {
 		staticFeed = await loadStaticStatusFeed()
-		if (staticFeed && isFreshForToday(staticFeed)) {
+		if (staticFeed && isStaticFeedFreshEnough(staticFeed)) {
 			return staticFeed
 		}
 	} catch {
