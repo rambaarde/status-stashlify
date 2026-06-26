@@ -50,6 +50,23 @@ const STATIC_FEED_URLS = [
 	'/status.json',
 ]
 
+const FEED_TIME_ZONE =
+	process.env.NEXT_PUBLIC_STATUS_FEED_TIME_ZONE || 'Asia/Manila'
+
+/**
+ * How many whole feed-calendar days a static JSON feed may lag before we stop
+ * trusting it and attempt the live uptime API instead.
+ *
+ * Rationale:
+ * - The public site is deployed via GitHub Pages, which can lag behind feed
+ *   commits even when the recorder is healthy.
+ * - The uptime API is a fallback only; it may temporarily report `nodata`
+ *   while the static recorder already has correct daily snapshots.
+ * - A small grace window keeps the public page stable during deploy delays
+ *   without masking a genuinely abandoned static feed long-term.
+ */
+const STATIC_FEED_MAX_LAG_DAYS = 2
+
 const SERVICE_NAMES = [
 	'Dashboard & Storefront',
 	'Inventory, Sales & Orders',
@@ -61,13 +78,92 @@ function createFallbackDays(days = 90): DayData[] {
 	const result: DayData[] = []
 	for (let i = days - 1; i >= 0; i--) {
 		const date = new Date()
-		date.setDate(date.getDate() - i)
+		date.setUTCDate(date.getUTCDate() - i)
 		result.push({
-			date: date.toISOString().split('T')[0],
+			date: toFeedDateKey(date),
 			status: 'nodata',
 		})
 	}
 	return result
+}
+
+/**
+ * Format a date in the same timezone used by the recorder.
+ */
+function toFeedDateKey(date: Date): string {
+	const parts = new Intl.DateTimeFormat('en-CA', {
+		timeZone: FEED_TIME_ZONE,
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+	}).formatToParts(date)
+	const year = parts.find((part) => part.type === 'year')?.value
+	const month = parts.find((part) => part.type === 'month')?.value
+	const day = parts.find((part) => part.type === 'day')?.value
+
+	if (!year || !month || !day) {
+		return date.toISOString().split('T')[0]
+	}
+
+	return `${year}-${month}-${day}`
+}
+
+/**
+ * Format incident generation time in the public status-site timezone.
+ */
+export function formatIncidentGeneratedAt(
+	generatedAt: string,
+): string {
+	const date = new Date(generatedAt)
+
+	if (Number.isNaN(date.getTime())) {
+		return generatedAt
+	}
+
+	return new Intl.DateTimeFormat('en-US', {
+		timeZone: FEED_TIME_ZONE,
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric',
+		hour: 'numeric',
+		minute: '2-digit',
+		timeZoneName: 'short',
+	}).format(date)
+}
+
+function dayKeyToUtc(dayKey: string): number | null {
+	const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dayKey)
+	if (!match) return null
+
+	const [, year, month, day] = match
+	return Date.UTC(Number(year), Number(month) - 1, Number(day))
+}
+
+/**
+ * Static feed is acceptable as long as it is not materially stale. Pages deploy
+ * lag of a few hours or one calendar day should not force a fallback to the
+ * live uptime API.
+ */
+function isStaticFeedFreshEnough(feed: StatusResponse): boolean {
+	const todayKey = toFeedDateKey(new Date())
+	const latestDay = feed.services[0]?.days.at(-1)?.date
+
+	if (!latestDay) {
+		return false
+	}
+
+	const todayUtc = dayKeyToUtc(todayKey)
+	const latestUtc = dayKeyToUtc(latestDay)
+
+	if (todayUtc === null || latestUtc === null) {
+		return latestDay === todayKey
+	}
+
+	const diffDays = Math.floor(
+		(todayUtc - latestUtc) / (24 * 60 * 60 * 1000),
+	)
+
+	return diffDays <= STATIC_FEED_MAX_LAG_DAYS
 }
 
 export function createFallbackStatusResponse(): StatusResponse {
@@ -210,9 +306,13 @@ async function loadStaticStatusFeed(): Promise<StatusResponse | null> {
  * Load the JSON feed used by the public status page.
  */
 export async function loadStatusFeed(): Promise<StatusResponse> {
+	let staticFeed: StatusResponse | null = null
+
 	try {
-		const staticFeed = await loadStaticStatusFeed()
-		if (staticFeed) return staticFeed
+		staticFeed = await loadStaticStatusFeed()
+		if (staticFeed && isStaticFeedFreshEnough(staticFeed)) {
+			return staticFeed
+		}
 	} catch {
 		// Fall through to the live uptime endpoint below.
 	}
@@ -226,13 +326,21 @@ export async function loadStatusFeed(): Promise<StatusResponse> {
 			throw new Error('Uptime endpoint unavailable')
 		}
 
-		const normalized = normalizeStatusResponse(
-			await response.json(),
-		)
-		if (normalized) return normalized
+		const normalized = normalizeStatusResponse(await response.json())
+		if (normalized) {
+			if (staticFeed?.incidentReports?.length) {
+				return {
+					services: normalized.services,
+					incidentReports: staticFeed.incidentReports,
+				}
+			}
+			return normalized
+		}
 	} catch {
+		if (staticFeed) return staticFeed
 		return createFallbackStatusResponse()
 	}
 
+	if (staticFeed) return staticFeed
 	return createFallbackStatusResponse()
 }
