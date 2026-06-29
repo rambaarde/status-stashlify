@@ -3,19 +3,19 @@
   "services": [
     {
       "name": "Dashboard & Storefront",
-      "status": "operational"
+      "status": "down"
     },
     {
       "name": "Inventory, Sales & Orders",
-      "status": "operational"
+      "status": "down"
     },
     {
       "name": "Payments",
-      "status": "operational"
+      "status": "down"
     },
     {
       "name": "Authentication",
-      "status": "operational"
+      "status": "down"
     }
   ]
 }
