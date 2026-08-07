@@ -1,0 +1,21 @@
+{
+  "date": "2026-05-11",
+  "services": [
+    {
+      "name": "Dashboard & Storefront",
+      "status": "degraded"
+    },
+    {
+      "name": "Inventory, Sales & Orders",
+      "status": "down"
+    },
+    {
+      "name": "Payments",
+      "status": "down"
+    },
+    {
+      "name": "Authentication",
+      "status": "down"
+    }
+  ]
+}

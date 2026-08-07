@@ -1,0 +1,21 @@
+{
+  "date": "2026-08-02",
+  "services": [
+    {
+      "name": "Dashboard & Storefront",
+      "status": "operational"
+    },
+    {
+      "name": "Inventory, Sales & Orders",
+      "status": "operational"
+    },
+    {
+      "name": "Payments",
+      "status": "operational"
+    },
+    {
+      "name": "Authentication",
+      "status": "operational"
+    }
+  ]
+}

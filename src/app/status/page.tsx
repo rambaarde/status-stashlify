@@ -8,7 +8,11 @@ import {
 } from 'react'
 import { RefreshCw } from 'lucide-react'
 import Link from 'next/link'
-import { loadStatusFeed, type StatusResponse } from '@/lib/status-feed'
+import {
+	formatIncidentGeneratedAt,
+	loadStatusFeed,
+	type StatusResponse,
+} from '@/lib/status-feed'
 
 type Status =
 	| 'operational'
@@ -80,6 +84,20 @@ const BANNER_CONFIG: Record<
 	},
 }
 
+const INCIDENT_ACCENT: Record<
+	'degraded' | 'down',
+	{ title: string; border: string }
+> = {
+	degraded: {
+		title: 'text-[#e6a82a]',
+		border: 'border-l-[#e6a82a]',
+	},
+	down: {
+		title: 'text-[#e04343]',
+		border: 'border-l-[#e04343]',
+	},
+}
+
 function formatDate(dateStr: string): string {
 	const date = new Date(dateStr + 'T00:00:00')
 	return date.toLocaleDateString('en-GB', {
@@ -91,9 +109,11 @@ function formatDate(dateStr: string): string {
 
 function Tooltip({
 	day,
+	summary,
 	barRef,
 }: {
 	day: DayData
+	summary?: string
 	barRef: HTMLDivElement
 }) {
 	const [pos, setPos] = useState({ left: 0, top: 0, arrowLeft: 0 })
@@ -162,6 +182,11 @@ function Tooltip({
 						{label}
 					</div>
 				)}
+				{summary && status !== 'operational' && (
+					<p className="mt-2 text-[13px] leading-5 text-[#141413] dark:text-[#F7F7F5]">
+						{summary}
+					</p>
+				)}
 			</div>
 		</div>
 	)
@@ -183,9 +208,13 @@ function useIsMobile() {
 function UptimeBar({
 	days,
 	uptimePercent,
+	serviceName,
+	reportMap,
 }: {
 	days: DayData[]
 	uptimePercent: string
+	serviceName: string
+	reportMap: Map<string, string>
 }) {
 	const [activeDay, setActiveDay] = useState<{
 		index: number
@@ -253,6 +282,11 @@ function UptimeBar({
 			{activeDay !== null && (
 				<Tooltip
 					day={visibleDays[activeDay.index]}
+					summary={
+						reportMap.get(
+							`${visibleDays[activeDay.index].date}::${serviceName}`,
+						)
+					}
 					barRef={activeDay.ref}
 				/>
 			)}
@@ -262,8 +296,10 @@ function UptimeBar({
 
 function ServiceCard({
 	service,
+	reportMap,
 }: {
 	service: ServiceData
+	reportMap: Map<string, string>
 }) {
 	const status = service.currentStatus as Status
 	const label =
@@ -284,6 +320,8 @@ function ServiceCard({
 			<UptimeBar
 				days={service.days}
 				uptimePercent={service.uptimePercent}
+				serviceName={service.name}
+				reportMap={reportMap}
 			/>
 		</div>
 	)
@@ -363,6 +401,24 @@ export default function StatusPage() {
 	const banner =
 		BANNER_CONFIG[overall] ??
 		BANNER_CONFIG.nodata
+	const incidentSummaryMap = useMemo(() => {
+		const map = new Map<string, string>()
+		for (const report of data?.incidentReports || []) {
+			map.set(`${report.date}::${report.serviceName}`, report.summary)
+		}
+		return map
+	}, [data?.incidentReports])
+	const incidentReports = useMemo(
+		() =>
+			(data?.incidentReports || [])
+				.slice()
+				.sort(
+					(a, b) =>
+						new Date(b.generatedAt).getTime() -
+						new Date(a.generatedAt).getTime()
+				),
+		[data?.incidentReports]
+	)
 
 	return (
 		<div className="min-h-screen bg-[#F7F7F5] dark:bg-[#0A0A0A] text-[#0F0F0F] dark:text-[#F7F7F5] font-[family-name:var(--font-inter)] selection:bg-[#0F0F0F] dark:selection:bg-white selection:text-white dark:selection:text-[#0F0F0F]">
@@ -426,6 +482,9 @@ export default function StatusPage() {
 											service={
 												service
 											}
+											reportMap={
+												incidentSummaryMap
+											}
 										/>
 									)
 								)
@@ -447,39 +506,45 @@ export default function StatusPage() {
 							<h2 className="text-xl sm:text-2xl font-bold text-[#141413] dark:text-[#F7F7F5] mb-4">
 								Past Incidents
 							</h2>
-							{[0, 1, 2, 3, 4, 5, 6].map(
-								(daysAgo) => {
-									const date =
-										new Date()
-									date.setDate(
-										date.getDate() -
-											daysAgo
-									)
-									const formatted =
-										date.toLocaleDateString(
-											'en-US',
-											{
-												month: 'short',
-												day: 'numeric',
-												year: 'numeric',
-											}
+							{incidentReports.length === 0 ? (
+								<p className="text-[14px] text-[#b0ada3]">
+									No incidents reported.
+								</p>
+							) : (
+								<div className="space-y-4">
+									{incidentReports.map(
+										(report) => (
+											<div
+												key={report.id}
+												className={`py-3 pl-4 border-b border-l-4 border-[#DEDCD1] dark:border-[#2A2A2A] ${
+													INCIDENT_ACCENT[
+														report.severity
+													].border
+												}`}
+											>
+												<h3
+													className={`text-[14px] font-bold ${
+														INCIDENT_ACCENT[
+															report.severity
+														].title
+													}`}
+												>
+													{report.title}
+												</h3>
+												<p className="text-[13px] text-[#b0ada3] mt-0.5">
+													{report.serviceName}
+													{' • '}
+													{formatIncidentGeneratedAt(
+														report.generatedAt
+													)}
+												</p>
+												<p className="text-[14px] text-[#141413] dark:text-[#F7F7F5] leading-6 mt-2">
+													{report.summary}
+												</p>
+											</div>
 										)
-									return (
-										<div
-											key={daysAgo}
-											className="py-3 border-b border-[#DEDCD1] dark:border-[#2A2A2A]"
-										>
-											<h3 className="text-[14px] font-bold text-[#141413] dark:text-[#F7F7F5]">
-												{formatted}
-											</h3>
-											<p className="text-[14px] text-[#b0ada3] mt-0.5">
-												No
-												incidents
-												reported.
-											</p>
-										</div>
-									)
-								}
+									)}
+								</div>
 							)}
 						</div>
 					</>

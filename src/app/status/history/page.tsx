@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import {
+	formatIncidentGeneratedAt,
 	loadStatusFeed,
 	type IncidentReport,
 	type StatusResponse,
@@ -97,9 +98,11 @@ function groupDaysByMonth(days: DayData[]): MonthData[] {
 
 function CalendarTooltip({
 	day,
+	summary,
 	cellRef,
 }: {
 	day: DayData
+	summary?: string
 	cellRef: HTMLDivElement
 }) {
 	const [pos, setPos] = useState({ left: 0, top: 0 })
@@ -150,12 +153,25 @@ function CalendarTooltip({
 						{statusLabel}
 					</span>
 				</div>
+				{summary && status !== 'operational' && (
+					<p className="mt-2 text-[12px] leading-5 text-[#141413] dark:text-[#F7F7F5]">
+						{summary}
+					</p>
+				)}
 			</div>
 		</div>
 	)
 }
 
-function MonthCalendar({ month }: { month: MonthData }) {
+function MonthCalendar({
+	month,
+	reportMap,
+	serviceName,
+}: {
+	month: MonthData
+	reportMap: Map<string, IncidentReport>
+	serviceName: string
+}) {
 	const [activeDay, setActiveDay] = useState<{
 		index: number
 		ref: HTMLDivElement
@@ -239,6 +255,11 @@ function MonthCalendar({ month }: { month: MonthData }) {
 			{activeDay !== null && cells[activeDay.index] && (
 				<CalendarTooltip
 					day={cells[activeDay.index]!}
+					summary={
+						reportMap.get(
+							`${cells[activeDay.index]!.date}::${serviceName}`,
+						)?.summary
+					}
 					cellRef={activeDay.ref}
 				/>
 			)}
@@ -411,15 +432,24 @@ function UptimeTab({
 	selectedService,
 	onServiceChange,
 	rangeStart,
+	incidentReports,
 }: {
 	services: ServiceData[]
 	selectedService: string
 	onServiceChange: (name: string) => void
 	rangeStart: Date
+	incidentReports: IncidentReport[]
 }) {
 	const service = services.find(
 		(s) => s.name === selectedService
 	)
+	const reportMap = useMemo(() => {
+		const map = new Map<string, IncidentReport>()
+		for (const report of incidentReports) {
+			map.set(`${report.date}::${report.serviceName}`, report)
+		}
+		return map
+	}, [incidentReports])
 
 	const months = useMemo(() => {
 		if (!service) return []
@@ -474,6 +504,8 @@ function UptimeTab({
 					<MonthCalendar
 						key={`${month.year}-${month.month}`}
 						month={month}
+						reportMap={reportMap}
+						serviceName={service.name}
 					/>
 				))}
 				{months.length === 0 && (
@@ -510,7 +542,11 @@ function IncidentReportsSection({
 									{report.title}
 								</h3>
 								<p className="text-[13px] text-[#b0ada3]">
-									{report.serviceName} • {report.date}
+									{report.serviceName}
+									{' • '}
+									{formatIncidentGeneratedAt(
+										report.generatedAt
+									)}
 								</p>
 							</div>
 							<span className="text-[11px] uppercase tracking-[0.08em] text-[#7c7b72] border border-[#DEDCD1] dark:border-[#2A2A2A] rounded px-2 py-1 self-start">
@@ -730,6 +766,7 @@ export default function HistoryPage() {
 						selectedService={selectedService}
 						onServiceChange={setSelectedService}
 						rangeStart={rangeStart}
+						incidentReports={incidentReports}
 					/>
 				) : (
 					<IncidentsTab

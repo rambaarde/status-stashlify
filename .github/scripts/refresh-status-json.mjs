@@ -59,13 +59,6 @@ const SIMULATED_SERVICE = {
 	authentication: 'Authentication',
 }
 
-const STATUS_PRIORITY = {
-	nodata: 0,
-	operational: 1,
-	degraded: 2,
-	down: 3,
-}
-
 /**
  * Create a stable id for an incident report entry.
  * @param {string} date
@@ -332,18 +325,6 @@ function normalizeStatus(status) {
 		return status
 	}
 	return 'operational'
-}
-
-/**
- * Pick the worse of two statuses so the day keeps the most severe result.
- * @param {'nodata' | 'operational' | 'degraded' | 'down'} current
- * @param {'operational' | 'degraded' | 'down'} next
- * @returns {'operational' | 'degraded' | 'down'}
- */
-function mergeStatus(current, next) {
-	const currentPriority = STATUS_PRIORITY[current] ?? STATUS_PRIORITY.operational
-	const nextPriority = STATUS_PRIORITY[next] ?? STATUS_PRIORITY.operational
-	return nextPriority > currentPriority ? next : current
 }
 
 /**
@@ -617,9 +598,12 @@ async function main() {
 		if (todayIndex !== -1) {
 			const nextStatus = probeMap.get(service.name)?.status
 			if (nextStatus) {
+				// Keep the public status page live-honest for the current day.
+				// Earlier days remain historical snapshots, but today's bar should
+				// reflect the latest probe result instead of locking the worst state.
 				days[todayIndex] = {
 					date: todayKey,
-					status: mergeStatus(days[todayIndex].status, nextStatus),
+					status: nextStatus,
 				}
 			}
 		}
