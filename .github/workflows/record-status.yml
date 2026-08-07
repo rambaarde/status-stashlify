@@ -23,7 +23,10 @@ permissions:
 
 concurrency:
   group: status-feed
-  cancel-in-progress: true
+  # Never cancel a recorder mid-flight: a cancelled run can die between
+  # `git commit` and `git push`, silently dropping that sample. Scheduled runs
+  # already arrive in bursts (GitHub defers `*/5`), so queue them instead.
+  cancel-in-progress: false
 
 env:
   OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -63,4 +66,18 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/status public/status.json
           git commit -m "chore(status): refresh uptime feed"
-          git push
+
+          # This workflow and alert-status.yml both push to main on the same
+          # `*/5` schedule, so they collide and one push is rejected as
+          # non-fast-forward. Rebase onto whatever landed first and retry.
+          for attempt in 1 2 3 4 5; do
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt) — rebasing onto origin/main."
+            git pull --rebase --autostash origin main || exit 1
+            sleep $((attempt * 3))
+          done
+
+          echo "::error::Could not push refreshed feed after 5 attempts."
+          exit 1
