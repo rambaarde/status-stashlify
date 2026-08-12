@@ -106,7 +106,7 @@ function toDateKey(date) {
  * @param {'operational' | 'nodata'} fillStatus
  * @returns {{date: string, status: string}[]}
  */
-function createDays(days, fillStatus = 'operational') {
+function createDays(days, fillStatus = 'nodata') {
 	const result = []
 	for (let i = days - 1; i >= 0; i--) {
 		const date = new Date()
@@ -147,8 +147,8 @@ function createBaseFeed() {
 	return {
 		services: SERVICES.map((service) => ({
 			name: service.name,
-			days: createDays(HISTORY_DAYS, 'operational'),
-			currentStatus: 'operational',
+			days: createDays(HISTORY_DAYS, 'nodata'),
+			currentStatus: 'nodata',
 			uptimePercent: '100.0',
 		})),
 		incidentReports: [],
@@ -299,7 +299,10 @@ function normalizeExistingFeed(payload) {
 
 			const days = service.days.map((day) => ({
 				date: day.date,
-				status: dayMap.get(day.date) ?? 'operational',
+				// No recorded probe for this day => 'nodata'. Previously defaulted
+				// to 'operational', which silently published unmeasured days as
+				// healthy — the single biggest source of false green on the feed.
+				status: dayMap.get(day.date) ?? 'nodata',
 			}))
 
 			return {
@@ -324,7 +327,9 @@ function normalizeStatus(status) {
 	if (status === 'operational' || status === 'degraded' || status === 'down') {
 		return status
 	}
-	return 'operational'
+	// Anything unrecognized means we do not know the state — never assume health.
+	// A status page that guesses green is worse than one that admits a gap.
+	return 'nodata'
 }
 
 /**
@@ -334,7 +339,7 @@ function normalizeStatus(status) {
  */
 function getCurrentStatus(days) {
 	const latest = days[days.length - 1]
-	return latest?.status ?? 'operational'
+	return latest?.status ?? 'nodata'
 }
 
 /**
@@ -343,11 +348,16 @@ function getCurrentStatus(days) {
  * @returns {string}
  */
 function getUptimePercent(days) {
-	if (days.length === 0) return '100.0'
-	const operationalDays = days.filter(
+	// Uptime is a share of MEASURED time, not of calendar days. Unmeasured days
+	// are excluded from both sides of the ratio: counting them as healthy
+	// inflated the figure, and counting them as downtime would understate it.
+	// Neither is true — we simply have no observation for those days.
+	const measured = days.filter((day) => day.status !== 'nodata')
+	if (measured.length === 0) return '100.0'
+	const operationalDays = measured.filter(
 		(day) => day.status === 'operational',
 	).length
-	return ((operationalDays / days.length) * 100).toFixed(1)
+	return ((operationalDays / measured.length) * 100).toFixed(1)
 }
 
 /**
@@ -589,9 +599,14 @@ async function main() {
 	const incidentCandidates = []
 
 	for (const service of existingFeed.services) {
+		// Carry 'nodata' through untouched. This previously rewrote every
+		// unmeasured day to 'operational' immediately before publishing, so a day
+		// the recorder never ran looked identical to a day everything was healthy.
+		// The frontend already renders 'nodata' as grey — it was simply never
+		// receiving it.
 		const days = service.days.map((day) => ({
 			date: day.date,
-			status: day.status === 'nodata' ? 'operational' : day.status,
+			status: day.status,
 		}))
 
 		const todayIndex = days.findIndex((day) => day.date === todayKey)
