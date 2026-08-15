@@ -7,7 +7,7 @@
     },
     {
       "name": "Inventory, Sales & Orders",
-      "status": "degraded"
+      "status": "operational"
     },
     {
       "name": "Payments",
