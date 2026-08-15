@@ -728,11 +728,11 @@
         },
         {
           "date": "2026-08-16",
-          "status": "operational"
+          "status": "degraded"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "97.8"
+      "currentStatus": "degraded",
+      "uptimePercent": "96.7"
     },
     {
       "name": "Payments",
