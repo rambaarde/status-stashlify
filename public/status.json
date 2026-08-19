@@ -361,11 +361,11 @@
         },
         {
           "date": "2026-08-20",
-          "status": "down"
+          "status": "operational"
         }
       ],
-      "currentStatus": "down",
-      "uptimePercent": "98.9"
+      "currentStatus": "operational",
+      "uptimePercent": "100.0"
     },
     {
       "name": "Inventory, Sales & Orders",
@@ -728,11 +728,11 @@
         },
         {
           "date": "2026-08-20",
-          "status": "down"
+          "status": "operational"
         }
       ],
-      "currentStatus": "down",
-      "uptimePercent": "97.8"
+      "currentStatus": "operational",
+      "uptimePercent": "98.9"
     },
     {
       "name": "Payments",
@@ -1095,11 +1095,11 @@
         },
         {
           "date": "2026-08-20",
-          "status": "down"
+          "status": "operational"
         }
       ],
-      "currentStatus": "down",
-      "uptimePercent": "97.8"
+      "currentStatus": "operational",
+      "uptimePercent": "98.9"
     },
     {
       "name": "Authentication",
@@ -1462,11 +1462,11 @@
         },
         {
           "date": "2026-08-20",
-          "status": "down"
+          "status": "operational"
         }
       ],
-      "currentStatus": "down",
-      "uptimePercent": "97.8"
+      "currentStatus": "operational",
+      "uptimePercent": "98.9"
     }
   ],
   "incidentReports": [
