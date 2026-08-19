@@ -4,10 +4,6 @@
       "name": "Dashboard & Storefront",
       "days": [
         {
-          "date": "2026-05-22",
-          "status": "operational"
-        },
-        {
           "date": "2026-05-23",
           "status": "operational"
         },
@@ -362,19 +358,19 @@
         {
           "date": "2026-08-19",
           "status": "operational"
+        },
+        {
+          "date": "2026-08-20",
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "100.0"
+      "currentStatus": "down",
+      "uptimePercent": "98.9"
     },
     {
       "name": "Inventory, Sales & Orders",
       "days": [
         {
-          "date": "2026-05-22",
-          "status": "down"
-        },
-        {
           "date": "2026-05-23",
           "status": "operational"
         },
@@ -729,19 +725,19 @@
         {
           "date": "2026-08-19",
           "status": "operational"
+        },
+        {
+          "date": "2026-08-20",
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
+      "currentStatus": "down",
       "uptimePercent": "97.8"
     },
     {
       "name": "Payments",
       "days": [
         {
-          "date": "2026-05-22",
-          "status": "down"
-        },
-        {
           "date": "2026-05-23",
           "status": "operational"
         },
@@ -1096,19 +1092,19 @@
         {
           "date": "2026-08-19",
           "status": "operational"
+        },
+        {
+          "date": "2026-08-20",
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
+      "currentStatus": "down",
       "uptimePercent": "97.8"
     },
     {
       "name": "Authentication",
       "days": [
         {
-          "date": "2026-05-22",
-          "status": "down"
-        },
-        {
           "date": "2026-05-23",
           "status": "operational"
         },
@@ -1463,13 +1459,69 @@
         {
           "date": "2026-08-19",
           "status": "operational"
+        },
+        {
+          "date": "2026-08-20",
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
+      "currentStatus": "down",
       "uptimePercent": "97.8"
     }
   ],
   "incidentReports": [
+    {
+      "id": "2026-08-20:authentication",
+      "date": "2026-08-20",
+      "serviceName": "Authentication",
+      "severity": "down",
+      "title": "Authentication Service Outage",
+      "summary": "On August 20, 2026, our Authentication service experienced a complete outage, resulting in users being unable to authenticate. The service returned a network error with an observed response time of 10001ms.",
+      "impact": "All users were unable to access authentication services during this incident.",
+      "resolution": "Our team is currently investigating the root cause of the outage. We will provide updates as more information becomes available.",
+      "generatedAt": "2026-08-19T16:00:50.209Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-08-20:payments",
+      "date": "2026-08-20",
+      "serviceName": "Payments",
+      "severity": "down",
+      "title": "Payments Service Outage",
+      "summary": "On August 20, 2026, our Payments service experienced a complete outage, resulting in a network error for users attempting to process transactions. The observed response time was 10001ms.",
+      "impact": "All payment processing functionalities were unavailable during this incident, affecting all users attempting to make payments.",
+      "resolution": "Our team is currently investigating the root cause of the outage. We will provide updates as more information becomes available.",
+      "generatedAt": "2026-08-19T16:00:47.989Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-08-20:inventory-sales-orders",
+      "date": "2026-08-20",
+      "serviceName": "Inventory, Sales & Orders",
+      "severity": "down",
+      "title": "Service Disruption - Inventory, Sales & Orders",
+      "summary": "On August 20, 2026, our Inventory, Sales & Orders service experienced a complete outage, resulting in a network error with an observed response time of 10000ms.",
+      "impact": "Customers were unable to access the Inventory, Sales & Orders service during this incident.",
+      "resolution": "Our team is currently investigating the root cause of the outage and is working to restore service as quickly as possible.",
+      "generatedAt": "2026-08-19T16:00:45.692Z",
+      "status": "published",
+      "source": "openrouter"
+    },
+    {
+      "id": "2026-08-20:dashboard-storefront",
+      "date": "2026-08-20",
+      "serviceName": "Dashboard & Storefront",
+      "severity": "down",
+      "title": "Dashboard & Storefront Service Interruption",
+      "summary": "On August 20, 2026, our Dashboard and Storefront services experienced a complete outage, resulting in a network error and an observed response time of 10004ms.",
+      "impact": "All users were unable to access the Dashboard and Storefront services during this incident.",
+      "resolution": "Our team is currently investigating the root cause of the outage and is working to restore services as quickly as possible.",
+      "generatedAt": "2026-08-19T16:00:50.038Z",
+      "status": "published",
+      "source": "openrouter"
+    },
     {
       "id": "2026-08-17:dashboard-storefront",
       "date": "2026-08-17",
