@@ -361,11 +361,11 @@
         },
         {
           "date": "2026-08-25",
-          "status": "operational"
+          "status": "degraded"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "100.0"
+      "currentStatus": "degraded",
+      "uptimePercent": "98.9"
     },
     {
       "name": "Inventory, Sales & Orders",
