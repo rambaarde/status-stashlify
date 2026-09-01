@@ -8,6 +8,7 @@ import {
 } from 'react'
 import { RefreshCw } from 'lucide-react'
 import Link from 'next/link'
+import { StatusHero } from './status-hero'
 import {
 	formatIncidentGeneratedAt,
 	loadStatusFeed,
@@ -421,9 +422,11 @@ export default function StatusPage() {
 	)
 
 	return (
-		<div className="min-h-screen bg-[#F7F7F5] dark:bg-[#0A0A0A] text-[#0F0F0F] dark:text-[#F7F7F5] font-[family-name:var(--font-inter)] selection:bg-[#0F0F0F] dark:selection:bg-white selection:text-white dark:selection:text-[#0F0F0F]">
-			<main className="max-w-[850px] mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-16 sm:pb-20">
-				<div className="flex items-center justify-between mb-8 sm:mb-10">
+		<div className="min-h-screen overflow-x-clip bg-[#F7F7F5] dark:bg-[#0A0A0A] text-[#0F0F0F] dark:text-[#F7F7F5] font-[family-name:var(--font-inter)] selection:bg-[#0F0F0F] dark:selection:bg-white selection:text-white dark:selection:text-[#0F0F0F]">
+			<main className="max-w-[850px] mx-auto pb-16 sm:pb-20">
+				<StatusHero />
+				<div className="px-4 sm:px-6">
+				<div className="flex items-center justify-between mt-8 sm:mt-10 mb-6 sm:mb-8">
 					<h1 className="text-2xl sm:text-3xl md:text-4xl font-medium font-[family-name:var(--font-outfit)] tracking-tight text-[#0F0F0F] dark:text-[#F7F7F5]">
 						System Status
 					</h1>
@@ -549,6 +552,7 @@ export default function StatusPage() {
 						</div>
 					</>
 				)}
+				</div>
 			</main>
 		</div>
 	)
