@@ -4,10 +4,6 @@
       "name": "Dashboard & Storefront",
       "days": [
         {
-          "date": "2026-06-04",
-          "status": "operational"
-        },
-        {
           "date": "2026-06-05",
           "status": "operational"
         },
@@ -362,6 +358,10 @@
         {
           "date": "2026-09-01",
           "status": "operational"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "operational"
         }
       ],
       "currentStatus": "operational",
@@ -370,10 +370,6 @@
     {
       "name": "Inventory, Sales & Orders",
       "days": [
-        {
-          "date": "2026-06-04",
-          "status": "operational"
-        },
         {
           "date": "2026-06-05",
           "status": "operational"
@@ -728,6 +724,10 @@
         },
         {
           "date": "2026-09-01",
+          "status": "operational"
+        },
+        {
+          "date": "2026-09-02",
           "status": "operational"
         }
       ],
@@ -738,10 +738,6 @@
       "name": "Payments",
       "days": [
         {
-          "date": "2026-06-04",
-          "status": "operational"
-        },
-        {
           "date": "2026-06-05",
           "status": "operational"
         },
@@ -1095,6 +1091,10 @@
         },
         {
           "date": "2026-09-01",
+          "status": "operational"
+        },
+        {
+          "date": "2026-09-02",
           "status": "operational"
         }
       ],
@@ -1105,10 +1105,6 @@
       "name": "Authentication",
       "days": [
         {
-          "date": "2026-06-04",
-          "status": "operational"
-        },
-        {
           "date": "2026-06-05",
           "status": "operational"
         },
@@ -1462,6 +1458,10 @@
         },
         {
           "date": "2026-09-01",
+          "status": "operational"
+        },
+        {
+          "date": "2026-09-02",
           "status": "operational"
         }
       ],
