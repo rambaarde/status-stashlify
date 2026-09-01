@@ -669,6 +669,16 @@ export default function HistoryPage() {
 	return (
 		<div className="min-h-screen bg-[#F7F7F5] dark:bg-[#0A0A0A] text-[#0F0F0F] dark:text-[#F7F7F5] font-[family-name:var(--font-inter)] selection:bg-[#0F0F0F] dark:selection:bg-white selection:text-white dark:selection:text-[#0F0F0F]">
 			<main className="max-w-[850px] mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-16 sm:pb-20">
+				{/* This page is reachable only from the status page, and the browser
+				    back button is the only other way out. Give it an explicit door. */}
+				<Link
+					href="/status"
+					className="group inline-flex items-center gap-1 mb-6 text-[14px] font-medium text-[#b0ada3] transition-colors hover:text-[#141413] dark:hover:text-[#F7F7F5]"
+				>
+					<ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+					Back to System Status
+				</Link>
+
 				<div className="flex items-center gap-0 border-b border-[#DEDCD1] dark:border-[#2A2A2A] mb-8">
 					<button
 						onClick={() => setTab('incidents')}

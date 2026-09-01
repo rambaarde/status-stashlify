@@ -6,7 +6,7 @@ import {
 	useCallback,
 	useMemo,
 } from 'react'
-import { RefreshCw } from 'lucide-react'
+import { ArrowRight, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 import { StatusHero } from './status-hero'
 import {
@@ -466,10 +466,10 @@ export default function StatusPage() {
 								</span>{' '}
 								<Link
 									href="/status/history"
-									className="text-[#141413] dark:text-[#F7F7F5] font-medium underline underline-offset-2 hover:no-underline"
+									className="group inline-flex items-center gap-1.5 rounded bg-[#141413] dark:bg-[#F7F7F5] px-3 py-1.5 font-medium text-white dark:text-[#0A0A0A] transition-opacity hover:opacity-80"
 								>
-									View historical
-									uptime.
+									View historical uptime
+									<ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
 								</Link>
 							</p>
 						</div>
