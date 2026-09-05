@@ -20,19 +20,20 @@
  * can look healthy while nobody can reach it.
  *
  * LIMIT, deliberately not papered over: a service whose URL sends no CORS
- * header for this origin cannot be probed from a browser at all. Those keep
- * their feed status rather than being guessed at — see PROBE_URLS.
+ * header for this origin cannot be probed from a browser at all. Any such
+ * service keeps its feed status rather than being guessed at — see PROBE_URLS.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 /**
  * Service name -> a URL the browser may fetch. Names must match the feed's.
- * `https://stashlify.com/` is deliberately ABSENT: it serves no
- * Access-Control-Allow-Origin for this site, so the browser cannot see its
- * result. Adding that header there is what would make it probeable.
+ * The storefront is probed at /api/health rather than `/`: that route exists
+ * solely to answer this check and sends Access-Control-Allow-Origin for this
+ * site, which the HTML responses do not.
  */
 const PROBE_URLS: Record<string, string> = {
+	'Dashboard & Storefront': 'https://stashlify.com/api/health',
 	'Inventory, Sales & Orders': 'https://api.stashlify.com/health/ready',
 	Payments: 'https://api.stashlify.com/health',
 	Authentication: 'https://api.stashlify.com/health/ready',
