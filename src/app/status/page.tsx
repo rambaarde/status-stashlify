@@ -113,10 +113,13 @@ function Tooltip({
 	day,
 	summary,
 	barRef,
+	isLive = false,
 }: {
 	day: DayData
 	summary?: string
 	barRef: HTMLDivElement
+	/** True when this bar is today's and a live browser check overrode it. */
+	isLive?: boolean
 }) {
 	const [pos, setPos] = useState({ left: 0, top: 0, arrowLeft: 0 })
 
@@ -138,8 +141,14 @@ function Tooltip({
 	}, [barRef])
 
 	const status = day.status as Status
-	const label =
-		status === 'nodata'
+	// `isLive` marks the today bar when a browser check has overridden it: its
+	// wording must be present tense, because it is describing right now rather
+	// than a day that has already been recorded.
+	const label = isLive
+		? status === 'degraded'
+			? 'Responding slowly right now (live check).'
+			: 'Not responding right now (live check).'
+		: status === 'nodata'
 			? 'No data available'
 			: status === 'operational'
 				? 'No downtime recorded on this day.'
@@ -212,11 +221,14 @@ function UptimeBar({
 	uptimePercent,
 	serviceName,
 	reportMap,
+	liveStatus,
 }: {
 	days: DayData[]
 	uptimePercent: string
 	serviceName: string
 	reportMap: Map<string, string>
+	/** Live browser check for this service, when it can be probed. */
+	liveStatus?: Status
 }) {
 	const [activeDay, setActiveDay] = useState<{
 		index: number
@@ -224,9 +236,27 @@ function UptimeBar({
 	} | null>(null)
 	const isMobile = useIsMobile()
 
+	// A live outage repaints TODAY'S bar (and, because the tooltip reads the
+	// same value, its tooltip too — otherwise hovering a red row said "No
+	// downtime recorded on this day"). Deliberately only the last bar: the
+	// earlier days are history, and the API being down now does not change what
+	// happened last week. Repainting the whole row red would be inventing an
+	// outage that never occurred.
+	const effectiveDays = useMemo(() => {
+		if (!liveStatus || liveStatus === 'operational' || days.length === 0) {
+			return days
+		}
+		const copy = days.slice()
+		copy[copy.length - 1] = {
+			...copy[copy.length - 1],
+			status: liveStatus,
+		}
+		return copy
+	}, [days, liveStatus])
+
 	const visibleDays = useMemo(
-		() => (isMobile ? days.slice(-30) : days),
-		[days, isMobile]
+		() => (isMobile ? effectiveDays.slice(-30) : effectiveDays),
+		[effectiveDays, isMobile]
 	)
 	const daysLabel = isMobile ? '30' : '90'
 
@@ -299,6 +329,11 @@ function UptimeBar({
 						)
 					}
 					barRef={activeDay.ref}
+					isLive={
+						Boolean(liveStatus) &&
+						liveStatus !== 'operational' &&
+						activeDay.index === visibleDays.length - 1
+					}
 				/>
 			)}
 		</div>
@@ -339,6 +374,7 @@ function ServiceCard({
 				uptimePercent={service.uptimePercent}
 				serviceName={service.name}
 				reportMap={reportMap}
+				liveStatus={liveStatus}
 			/>
 		</div>
 	)
@@ -402,7 +438,24 @@ export default function StatusPage() {
 		return () => clearInterval(interval)
 	}, [fetchStatus])
 
-	const { statuses: liveStatuses } = useLiveStatus()
+	const { statuses: liveStatuses, checkedAt: liveCheckedAt } = useLiveStatus()
+
+	// The "checked Xs ago" label must age on screen. Without this it would
+	// freeze at "just now" between 60s sweeps and overstate its own freshness —
+	// the exact dishonesty this whole change exists to remove.
+	const [liveNow, setLiveNow] = useState(() => Date.now())
+	useEffect(() => {
+		const t = setInterval(() => setLiveNow(Date.now()), 1000)
+		return () => clearInterval(t)
+	}, [])
+	const liveAgo = (() => {
+		if (liveCheckedAt === null) return ''
+		const secs = Math.max(0, Math.round((liveNow - liveCheckedAt) / 1000))
+		if (secs < 5) return 'just now'
+		if (secs < 60) return `${secs}s ago`
+		const mins = Math.floor(secs / 60)
+		return `${mins}m ago`
+	})()
 
 	const overall: string = (() => {
 		if (!data?.services?.length) return 'nodata'
@@ -467,11 +520,23 @@ export default function StatusPage() {
 				) : (
 					<>
 						<div
-							className={`${banner.bg} text-white rounded px-4 sm:px-6 py-3 sm:py-4`}
+							className={`${banner.bg} text-white rounded px-4 sm:px-6 py-3 sm:py-4 flex flex-wrap items-center gap-x-3 gap-y-1`}
 						>
 							<span className="text-[14px] sm:text-[15px] font-semibold">
 								{banner.text}
 							</span>
+							{/* Freshness, not a second verdict: it says how old THIS
+							    banner is. Without it the page looked identical to the
+							    stale version and nothing told a reader it was live. */}
+							{liveCheckedAt !== null && (
+								<span className="ml-auto flex items-center gap-1.5 text-[12px] sm:text-[13px] text-white/85">
+									<span
+										className="inline-block h-1.5 w-1.5 rounded-full bg-white/90"
+										style={{ animation: 'livePulse 2s ease-in-out infinite' }}
+									/>
+									Live · checked {liveAgo}
+								</span>
+							)}
 						</div>
 
 						<div className="flex justify-end mt-8 sm:mt-12 mb-3">
