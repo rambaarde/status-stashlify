@@ -171,7 +171,8 @@ export function createFallbackStatusResponse(): StatusResponse {
 		services: SERVICE_NAMES.map((name) => ({
 			name,
 			currentStatus: 'nodata',
-			uptimePercent: '0.0',
+			// Total failure to load any feed measures nothing, so claim nothing.
+			uptimePercent: '',
 			days: createFallbackDays(),
 		})),
 	}
@@ -225,10 +226,12 @@ function normalizeStatusResponse(
 				typeof (item as { currentStatus?: unknown }).currentStatus === 'string'
 					? (item as { currentStatus: string }).currentStatus
 					: 'nodata',
+			// '' means "not measured" and renders as "No uptime data". A missing
+			// field is the same thing, so do not substitute a number here either.
 			uptimePercent:
 				typeof (item as { uptimePercent?: unknown }).uptimePercent === 'string'
 					? (item as { uptimePercent: string }).uptimePercent
-					: '0.0',
+					: '',
 		})
 	}
 
