@@ -27,3 +27,17 @@ body {
 a {
 	color: inherit;
 }
+
+
+/* The live dot in the status banner. Defined here rather than inline because
+   an inline style cannot declare keyframes — without this the dot renders
+   static and the "Live" claim has no visible heartbeat. */
+@keyframes livePulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.35; }
+}
+
+/* Respect users who asked the OS for less motion. */
+@media (prefers-reduced-motion: reduce) {
+	[style*='livePulse'] { animation: none !important; }
+}
