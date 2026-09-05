@@ -9,7 +9,7 @@ import {
 import { ArrowRight, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 import { StatusHero } from './status-hero'
-import { LiveProbe } from './live-probe'
+import { useLiveStatus } from './use-live-status'
 import {
 	formatIncidentGeneratedAt,
 	loadStatusFeed,
@@ -308,11 +308,17 @@ function UptimeBar({
 function ServiceCard({
 	service,
 	reportMap,
+	liveStatus,
 }: {
 	service: ServiceData
 	reportMap: Map<string, string>
+	/** Live probe result for this service, when it can be probed at all. */
+	liveStatus?: Status
 }) {
-	const status = service.currentStatus as Status
+	// The label a reader already looks at IS the status, so make it the live
+	// one when we have it. The feed value stands in only for services the
+	// browser cannot reach (no CORS header) — never a guess.
+	const status = (liveStatus ?? service.currentStatus) as Status
 	const label =
 		STATUS_LABEL[status] ?? STATUS_LABEL.nodata
 
@@ -396,10 +402,14 @@ export default function StatusPage() {
 		return () => clearInterval(interval)
 	}, [fetchStatus])
 
+	const { statuses: liveStatuses } = useLiveStatus()
+
 	const overall: string = (() => {
 		if (!data?.services?.length) return 'nodata'
+		// Same rule as each row: a live result wins over the feed, so the banner
+		// cannot keep saying "All Systems Operational" for hours after an outage.
 		const statuses = data.services.map(
-			(s) => s.currentStatus
+			(s) => liveStatuses[s.name] ?? s.currentStatus
 		)
 		if (statuses.every((s) => s === 'nodata')) return 'nodata'
 		if (statuses.some((s) => s === 'down'))
@@ -464,11 +474,6 @@ export default function StatusPage() {
 							</span>
 						</div>
 
-						{/* The banner and bars below summarise a feed refreshed by a
-						    scheduled job; this strip is checked by the visitor's own
-						    browser right now, so an outage shows here first. */}
-						<LiveProbe />
-
 						<div className="flex justify-end mt-8 sm:mt-12 mb-3">
 							<p className="text-[12px] sm:text-[13px] text-[#b0ada3]">
 								<span className="hidden sm:inline">
@@ -502,6 +507,12 @@ export default function StatusPage() {
 											}
 											reportMap={
 												incidentSummaryMap
+											}
+											liveStatus={
+												liveStatuses[
+													service
+														.name
+												]
 											}
 										/>
 									)
