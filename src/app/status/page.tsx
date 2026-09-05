@@ -9,6 +9,7 @@ import {
 import { ArrowRight, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 import { StatusHero } from './status-hero'
+import { LiveProbe } from './live-probe'
 import {
 	formatIncidentGeneratedAt,
 	loadStatusFeed,
@@ -272,8 +273,17 @@ function UptimeBar({
 					{daysLabel} days ago
 				</span>
 				<span className="text-[11px] sm:text-[12px] text-[#b0ada3] flex-1 text-center">
-					<span>{uptimePercent}</span>
-					<span> % uptime</span>
+					{/* An empty percent means nothing was measured. Printing a number
+					    there (it used to be "100.0") claims uptime the data cannot
+					    support, so say "no data" instead. */}
+					{uptimePercent ? (
+						<>
+							<span>{uptimePercent}</span>
+							<span> % uptime</span>
+						</>
+					) : (
+						<span>No uptime data</span>
+					)}
 				</span>
 				<span className="text-[11px] sm:text-[12px] text-[#b0ada3] flex-1 text-right">
 					Today
@@ -453,6 +463,11 @@ export default function StatusPage() {
 								{banner.text}
 							</span>
 						</div>
+
+						{/* The banner and bars below summarise a feed refreshed by a
+						    scheduled job; this strip is checked by the visitor's own
+						    browser right now, so an outage shows here first. */}
+						<LiveProbe />
 
 						<div className="flex justify-end mt-8 sm:mt-12 mb-3">
 							<p className="text-[12px] sm:text-[13px] text-[#b0ada3]">
