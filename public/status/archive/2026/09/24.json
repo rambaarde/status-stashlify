@@ -3,7 +3,7 @@
   "services": [
     {
       "name": "Dashboard & Storefront",
-      "status": "operational"
+      "status": "degraded"
     },
     {
       "name": "Inventory, Sales & Orders",
