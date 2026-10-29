@@ -7,15 +7,15 @@
     },
     {
       "name": "Inventory, Sales & Orders",
-      "status": "operational"
+      "status": "degraded"
     },
     {
       "name": "Payments",
-      "status": "operational"
+      "status": "degraded"
     },
     {
       "name": "Authentication",
-      "status": "operational"
+      "status": "degraded"
     }
   ]
 }
