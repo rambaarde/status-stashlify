@@ -361,11 +361,11 @@
         },
         {
           "date": "2026-11-07",
-          "status": "operational"
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "96.7"
+      "currentStatus": "down",
+      "uptimePercent": "95.6"
     },
     {
       "name": "Inventory, Sales & Orders",
@@ -1470,6 +1470,19 @@
     }
   ],
   "incidentReports": [
+    {
+      "id": "2026-11-07:dashboard-storefront",
+      "date": "2026-11-07",
+      "serviceName": "Dashboard & Storefront",
+      "severity": "down",
+      "title": "Service Disruption on Dashboard & Storefront",
+      "summary": "On November 7, 2026, our Dashboard and Storefront services experienced a complete outage, resulting in a network error for users.",
+      "impact": "Users were unable to access the Dashboard and Storefront services, leading to a disruption in service availability.",
+      "resolution": "Our team is actively investigating the issue to determine the root cause and restore service as quickly as possible.",
+      "generatedAt": "2026-11-07T14:25:16.755Z",
+      "status": "published",
+      "source": "openrouter"
+    },
     {
       "id": "2026-11-03:inventory-sales-orders",
       "date": "2026-11-03",
