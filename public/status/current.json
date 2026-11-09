@@ -4,10 +4,6 @@
       "name": "Dashboard & Storefront",
       "days": [
         {
-          "date": "2026-08-12",
-          "status": "operational"
-        },
-        {
           "date": "2026-08-13",
           "status": "operational"
         },
@@ -362,18 +358,18 @@
         {
           "date": "2026-11-09",
           "status": "operational"
+        },
+        {
+          "date": "2026-11-10",
+          "status": "down"
         }
       ],
-      "currentStatus": "operational",
-      "uptimePercent": "94.4"
+      "currentStatus": "down",
+      "uptimePercent": "93.3"
     },
     {
       "name": "Inventory, Sales & Orders",
       "days": [
-        {
-          "date": "2026-08-12",
-          "status": "operational"
-        },
         {
           "date": "2026-08-13",
           "status": "operational"
@@ -728,6 +724,10 @@
         },
         {
           "date": "2026-11-09",
+          "status": "operational"
+        },
+        {
+          "date": "2026-11-10",
           "status": "operational"
         }
       ],
@@ -738,10 +738,6 @@
       "name": "Payments",
       "days": [
         {
-          "date": "2026-08-12",
-          "status": "operational"
-        },
-        {
           "date": "2026-08-13",
           "status": "operational"
         },
@@ -1095,6 +1091,10 @@
         },
         {
           "date": "2026-11-09",
+          "status": "operational"
+        },
+        {
+          "date": "2026-11-10",
           "status": "operational"
         }
       ],
@@ -1105,10 +1105,6 @@
       "name": "Authentication",
       "days": [
         {
-          "date": "2026-08-12",
-          "status": "operational"
-        },
-        {
           "date": "2026-08-13",
           "status": "operational"
         },
@@ -1463,6 +1459,10 @@
         {
           "date": "2026-11-09",
           "status": "operational"
+        },
+        {
+          "date": "2026-11-10",
+          "status": "operational"
         }
       ],
       "currentStatus": "operational",
@@ -1470,6 +1470,19 @@
     }
   ],
   "incidentReports": [
+    {
+      "id": "2026-11-10:dashboard-storefront",
+      "date": "2026-11-10",
+      "serviceName": "Dashboard & Storefront",
+      "severity": "down",
+      "title": "Service Outage for Dashboard & Storefront",
+      "summary": "On November 10, 2026, our Dashboard and Storefront services experienced a complete outage, resulting in a network error for users.",
+      "impact": "All users were unable to access the Dashboard and Storefront services during this incident.",
+      "resolution": "Our team is currently investigating the root cause of the outage and will provide updates as soon as more information is available.",
+      "generatedAt": "2026-11-09T20:50:50.183Z",
+      "status": "published",
+      "source": "openrouter"
+    },
     {
       "id": "2026-11-08:dashboard-storefront",
       "date": "2026-11-08",
